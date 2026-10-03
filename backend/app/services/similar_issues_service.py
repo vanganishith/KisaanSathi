@@ -182,7 +182,7 @@ async def find_similar_issues(
 ) -> Dict[str, Any]:
     """
     Finds real historical incidents genuinely similar to the specified incident.
-    Combines PostGIS geographic proximity, symptom extraction, and Featherless Qwen3-VL reasoning.
+    Combines PostGIS geographic proximity, symptom extraction, and Fireworks AI (GLM-5.3-Flash) reasoning.
     
     Guarantees:
     - Never exposes private farmer details (names, phones, exact coordinates).
@@ -333,12 +333,12 @@ async def find_similar_issues(
             "is_crop_match": is_crop_match,
         })
 
-    # Limit candidates to top 4 most promising for Featherless Qwen3-VL evaluation
+    # Limit candidates to top 4 most promising for Fireworks AI (GLM-5.3-Flash) evaluation
     # Sort by: crop match first, then presence of symptoms/description
     candidates_for_eval.sort(key=lambda c: (c["is_crop_match"], len(c["problem"])), reverse=True)
     top_candidates = candidates_for_eval[:4]
 
-    # 4. Invoke Featherless Qwen3-VL for semantic symptom reasoning
+    # 4. Invoke Fireworks AI (GLM-5.3-Flash) for semantic symptom reasoning
     qwen_evaluations = await evaluate_candidate_similarity_qwen(
         current_case=current_case_data,
         candidate_cases=top_candidates,

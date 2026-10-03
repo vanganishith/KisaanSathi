@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional
 import json
 
 from app.core.config import settings
-from app.services.llm_service import _call_featherless_chat
+from app.services.llm_service import _call_fireworks_chat
 from app.services.incident_service import resolve_coordinate_location
 
 logger = logging.getLogger(__name__)
@@ -180,7 +180,7 @@ def get_verified_crop_schemes(crop_name: str, state: str, soil: str, season: str
 # ==============================================================
 
 # Calibrated with ICAR, ANGRAU (Andhra Pradesh), and PJTSAU (Telangana) recommendations.
-# Used if Featherless AI experiences a temporary gateway timeout.
+# Used if Fireworks AI experiences a temporary gateway timeout.
 OFFLINE_AGRONOMIC_KNOWLEDGE: Dict[str, Dict[str, List[Dict[str, Any]]]] = {
     "BLACK": {
         "KHARIF": [
@@ -462,7 +462,7 @@ def _get_fallback_recommendations(
     land_area_acres: float,
     language: str
 ) -> List[Dict[str, Any]]:
-    """Builds calibrated ICAR/university recommendations when Featherless is temporarily unavailable."""
+    """Builds calibrated ICAR/university recommendations when Fireworks AI is temporarily unavailable."""
     soil_key = "BLACK" if soil_type == "BLACK" else "RED"
     season_key = season_code if season_code in ("KHARIF", "RABI", "ZAID") else "KHARIF"
     
@@ -515,7 +515,7 @@ def _get_fallback_recommendations(
 
 
 # ==============================================================
-# 4. Featherless AI Structured Crop Planning Engine
+# 4. Fireworks AI (GLM-5.3-Flash) Structured Crop Planning Engine
 # ==============================================================
 
 async def generate_crop_planning_recommendations(
@@ -531,7 +531,7 @@ async def generate_crop_planning_recommendations(
     1. Validates inputs (land_area >= 0.5, soil in BLACK, RED).
     2. Resolves human-readable locality, district, and state from coordinates.
     3. Deterministically computes current agricultural season.
-    4. Constructs structured prompt for Featherless Qwen3-VL-30B-A3B-Instruct.
+    4. Constructs structured prompt for Fireworks AI (GLM-5.3-Flash).
     5. Requests top 3-5 suitable crops with per-acre estimates.
     6. Performs exact farm-wide math (per_acre * acres).
     7. Maps strictly verified government support schemes (no hallucinations).
@@ -560,7 +560,7 @@ async def generate_crop_planning_recommendations(
     season_code = season_info["season"]
     season_display = season_info["season_name"]
 
-    # 3. Call Featherless AI Qwen3-VL
+    # 3. Call Fireworks AI GLM-5.3-Flash
     recommendations = []
     used_ai = False
 
@@ -609,7 +609,7 @@ async def generate_crop_planning_recommendations(
     ]
 
     try:
-        raw_ai = await _call_featherless_chat(messages, temperature=0.2, max_tokens=1500)
+        raw_ai = await _call_fireworks_chat(messages, temperature=0.2, max_tokens=1500)
         parsed = json.loads(raw_ai)
         ai_recs = parsed.get("recommendations")
         if isinstance(ai_recs, list) and len(ai_recs) >= 2:
@@ -639,7 +639,7 @@ async def generate_crop_planning_recommendations(
                 })
             used_ai = True
     except Exception as ai_err:
-        logger.warning(f"[CropPlanning] Featherless AI call failed or timed out: {ai_err}. Using verified agronomic standard knowledge.")
+        logger.warning(f"[CropPlanning] Fireworks AI (GLM-5.3-Flash) call failed or timed out: {ai_err}. Using verified agronomic standard knowledge.")
         recommendations = _get_fallback_recommendations(soil_normalized, season_code, land_area_acres, lang)
 
     # 4. Map strictly verified government schemes for recommended crops
@@ -699,5 +699,5 @@ async def generate_crop_planning_recommendations(
         "government_support_unavailable_message": "Government support information is currently unavailable for this recommendation." if len(all_schemes) == 0 else None,
         "disclaimer": disclaimer_text,
         "government_note": gov_note,
-        "engine": "Featherless AI (Qwen3-VL-30B-A3B-Instruct)" if used_ai else "ICAR/Agricultural Standard Agronomic Engine"
+        "engine": "Fireworks AI (GLM-5.3-Flash)" if used_ai else "ICAR/Agricultural Standard Agronomic Engine"
     }

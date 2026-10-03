@@ -644,7 +644,7 @@ async def validate_and_understand_agricultural_complaint(
     language_hint: Optional[str] = "Telugu"
 ) -> Dict[str, Any]:
     """
-    Stage 1: Text-only Featherless Qwen3-VL analysis.
+    Stage 1: Text-only Fireworks AI (GLM-5.3-Flash) analysis.
     1. Validates whether the transcript is genuinely agriculture-related.
     2. Understands the complaint and extracts structured details without hallucination.
     3. Generates conversational responses and tailored photo guidance in the farmer's language.
@@ -677,7 +677,7 @@ Analyze this transcript for agricultural intent, extract structured details, and
     ]
 
     try:
-        raw_output = await _call_featherless_chat(messages, max_tokens=6144)
+        raw_output = await _call_fireworks_chat(messages, max_tokens=6144)
         parsed = _parse_llm_json(raw_output)
 
         is_agri = bool(parsed.get("agriculture_related", False))
@@ -784,7 +784,7 @@ Analyze this transcript for agricultural intent, extract structured details, and
         }
 
     except Exception as exc:
-        logger.warning(f"[LLM] Featherless Stage 1 call failed or key missing: {exc}. Using intelligent fallback.")
+        logger.warning(f"[LLM] Fireworks AI Stage 1 call failed or key missing: {exc}. Using intelligent fallback.")
         lower_t = clean_transcript.lower()
         agri_keywords = [
             "leaf", "leaves", "crop", "paddy", "rice", "cotton", "chilli", "mirapa", "merapu", "mirchi", "tomato", "maize",
@@ -912,14 +912,14 @@ async def evaluate_multimodal_evidence(
     yolo_findings: Optional[List[Dict[str, Any]]] = None
 ) -> Dict[str, Any]:
     """
-    Stage 2: Multimodal Featherless Qwen3-VL reasoning.
-    Sends complaint + 1-4 images + YOLO11 findings to Qwen/Qwen3-VL-30B-A3B-Instruct.
+    Stage 2: Multimodal Fireworks AI (GLM-5.3-Flash) reasoning.
+    Sends complaint + 1-4 images + YOLO11 findings to GLM-5.3-Flash.
     Returns:
     - overall_relevance, images (per-image evaluation & spatial mappings)
     - voice_image_assessment (consistency, reasoning, evidence)
     - multimodal_assessment (structured AEO synthesis & checks)
-    - visual_mappings (independent Qwen normalized spatial bounding boxes)
-    - vision (yolo detections + Qwen visual findings)
+    - visual_mappings (independent GLM normalized spatial bounding boxes)
+    - vision (yolo detections + GLM visual findings)
     - safe_aeo_approach
     """
     if not photos_data:
@@ -1003,7 +1003,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
     ]
 
     try:
-        raw_output = await _call_featherless_chat(messages, max_tokens=6144)
+        raw_output = await _call_fireworks_chat(messages, max_tokens=6144)
         parsed = _parse_llm_json(raw_output)
 
         raw_images = parsed.get("images") or []
@@ -1123,7 +1123,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
         }
 
     except Exception as exc:
-        logger.warning(f"[LLM] Multimodal Featherless call failed or key missing: {exc}. Generating structured fallback from YOLO11 findings.")
+        logger.warning(f"[LLM] Multimodal Fireworks AI call failed or key missing: {exc}. Generating structured fallback from YOLO11 findings.")
         image_evals = []
         has_any_useful = False
         all_visual_mappings = []
@@ -1621,7 +1621,7 @@ async def compare_followup_evidence(
     followup_photos: Optional[List[Dict[str, Any]]] = None
 ) -> Dict[str, Any]:
     """
-    Featherless Qwen3-VL multimodal comparison between initial complaint evidence and new follow-up update.
+    Fireworks AI (GLM-5.3-Flash) multimodal comparison between initial complaint evidence and new follow-up update.
     Returns structured outcome (IMPROVING, UNCHANGED, WORSENING, INSUFFICIENT_EVIDENCE) and reason.
     """
     clean_text = (followup_text or "").strip()
@@ -1656,7 +1656,7 @@ Determine whether the crop is IMPROVING, UNCHANGED, WORSENING, or INSUFFICIENT_E
     ]
 
     try:
-        raw_output = await _call_featherless_chat(messages, max_tokens=1500)
+        raw_output = await _call_fireworks_chat(messages, max_tokens=1500)
         parsed = _parse_llm_json(raw_output)
         outcome = parsed.get("outcome", "INSUFFICIENT_EVIDENCE")
         if outcome not in ("IMPROVING", "UNCHANGED", "WORSENING", "INSUFFICIENT_EVIDENCE"):
@@ -1664,7 +1664,7 @@ Determine whether the crop is IMPROVING, UNCHANGED, WORSENING, or INSUFFICIENT_E
 
         return {
             "outcome": outcome,
-            "reason": parsed.get("reason", "Follow-up comparison evaluated by Qwen3-VL."),
+            "reason": parsed.get("reason", "Follow-up comparison evaluated by Fireworks AI GLM-5.3-Flash."),
             "visual_markers_change": parsed.get("visual_markers_change", "N/A"),
             "recommended_aeo_action": parsed.get("recommended_aeo_action", "MONITOR")
         }
@@ -1740,7 +1740,7 @@ def _deterministic_symptom_similarity_fallback(
     language: str = "Telugu"
 ) -> List[Dict[str, Any]]:
     """
-    Deterministic rule-based fallback when Featherless Qwen3-VL is unavailable.
+    Deterministic rule-based fallback when Fireworks AI (GLM-5.3-Flash) is unavailable.
     Compares crop, symptom keywords, and disease types with precision.
     """
     is_te = "te" in language.lower() or "telugu" in language.lower()
@@ -1874,7 +1874,7 @@ async def evaluate_candidate_similarity_qwen(
     language: str = "Telugu"
 ) -> List[Dict[str, Any]]:
     """
-    Compares the newly reported complaint against candidate historical cases using Featherless Qwen3-VL.
+    Compares the newly reported complaint against candidate historical cases using Fireworks AI (GLM-5.3-Flash).
     Returns a list of similarity evaluation objects per candidate:
     [
       {
@@ -1924,7 +1924,7 @@ Produce "why_similar" in {language} for genuine matches."""
     ]
 
     try:
-        raw_output = await _call_featherless_chat(messages, temperature=0.1, max_tokens=3000)
+        raw_output = await _call_fireworks_chat(messages, temperature=0.1, max_tokens=3000)
         parsed = _parse_llm_json(raw_output)
         matches = parsed.get("matches", [])
         if isinstance(matches, list) and len(matches) > 0:

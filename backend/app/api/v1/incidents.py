@@ -465,7 +465,7 @@ async def submit_incident_form(
                 result["voice_ai_error"] = str(voice_err)
 
         # 3. If photos are provided, evaluate each photo independently via Phase 5 Vision AI (YOLO11)
-        #    AND Featherless Qwen3-VL Multimodal Reasoning
+        #    AND Fireworks AI (GLM-5.3-Flash) Multimodal Reasoning
         if photos_bytes_list and len(photos_bytes_list) > 0:
             photos_data = []
             for idx, p_bytes in enumerate(photos_bytes_list):
@@ -482,7 +482,7 @@ async def submit_incident_form(
             except Exception as vision_err:
                 result["vision_ai_error"] = str(vision_err)
 
-            # Featherless Qwen3-VL Multimodal Reasoning Stage
+            # Fireworks AI (GLM-5.3-Flash) Multimodal Reasoning Stage
             try:
                 complaint_ctx = {
                     "crop": crop,
@@ -577,8 +577,8 @@ async def submit_incident_form(
 
 @router.post(
     "/incidents/{incident_id}/analyze-multimodal",
-    summary="Trigger Featherless Qwen3-VL Multimodal Evidence Analysis on Incident",
-    description="Analyzes incident photo(s), YOLO findings, and voice complaint via Featherless Qwen3-VL, generating normalized spatial mappings and cross-evidence review.",
+    summary="Trigger Fireworks AI (GLM-5.3-Flash) Multimodal Evidence Analysis on Incident",
+    description="Analyzes incident photo(s), YOLO findings, and voice complaint via Fireworks AI (GLM-5.3-Flash), generating normalized spatial mappings and cross-evidence review.",
 )
 async def analyze_incident_multimodal_endpoint(incident_id: str):
     import httpx
@@ -648,7 +648,7 @@ async def analyze_incident_multimodal_endpoint(incident_id: str):
         "language": incident.get("language") or "Telugu"
     }
 
-    # Run Featherless Qwen3-VL Multimodal Analysis
+    # Run Fireworks AI (GLM-5.3-Flash) Multimodal Analysis
     multimodal_result = await evaluate_multimodal_evidence(
         complaint=complaint_ctx,
         photos_data=photos_data,
@@ -1331,7 +1331,7 @@ async def update_case_workflow_status(
     "/incidents/{incident_id}/advisory",
     response_model=AdvisoryResponse,
     summary="Submit Official AEO Advisory with Local-Language TTS",
-    description="Records AEO-written advisory, translates to farmer preferred language with Featherless AI, and generates audio speech.",
+    description="Records AEO-written advisory, translates to farmer preferred language with Fireworks AI, and generates audio speech.",
 )
 async def submit_officer_advisory(
     incident_id: str,
@@ -1507,7 +1507,7 @@ async def review_case_followup(
         comparison_status = payload.get("comparison_status") or "IMPROVING"
         new_advisory = payload.get("new_advisory")
 
-        # Optionally trigger Featherless Qwen3-VL comparison if baseline and followup images exist
+        # Optionally trigger Fireworks AI (GLM-5.3-Flash) comparison if baseline and followup images exist
         baseline_image = payload.get("baseline_image")
         followup_image = payload.get("followup_image")
         ai_progression = None
@@ -1784,7 +1784,7 @@ async def officer_login(payload: Dict[str, Any] = Body(...)):
 @router.get(
     "/incidents/{incident_id}/similar-issues",
     summary="Similar Issues Check",
-    description="Retrieves real historical similar cases for an incident using PostGIS distance and Featherless Qwen3-VL reasoning.",
+    description="Retrieves real historical similar cases for an incident using PostGIS distance and Fireworks AI (GLM-5.3-Flash) reasoning.",
 )
 async def get_similar_issues(
     incident_id: str,

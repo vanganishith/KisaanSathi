@@ -22,7 +22,7 @@ async def process_voice_for_incident(
     1. Verifies incident exists
     2. Uploads audio to Supabase Storage and records audio_url on incident
     3. Transcribes audio via AI4Bharat IndicConformer (Speech-to-Text)
-    4. Extracts structured agricultural meaning via Featherless AI Qwen3-VL
+    4. Extracts structured agricultural meaning via Fireworks AI (GLM-5.3-Flash)
     5. Inserts results into existing `ai_analysis` table referencing incident_id
     6. Updates incident status to 'AI_ANALYZED' without modifying original description
     """
