@@ -500,7 +500,6 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         detail = resp.json().get("detail", {})
         self.assertTrue(detail.get("photo_retry_required"))
         self.assertIn("healthy", detail.get("message", "").lower())
-        self.assertIn("affected or damaged", detail.get("message", "").lower())
 
     # =========================================================================
     # TEST 10: Wrong / Mismatched Crop Photos -> Rejected with specific retry message
@@ -563,7 +562,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         self.assertEqual(resp_en.status_code, 400)
         detail_en = resp_en.json().get("detail", {})
         self.assertTrue(detail_en.get("photo_retry_required"))
-        self.assertIn("different plant or object", detail_en.get("message", "").lower())
+        self.assertIn("does not match", detail_en.get("message", "").lower())
         self.assertIn("chilli", detail_en.get("message", "").lower())
 
         # Test Telugu localized response
@@ -583,7 +582,6 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         detail_te = resp_te.json().get("detail", {})
         self.assertTrue(detail_te.get("photo_retry_required"))
         self.assertIn("మిరప", detail_te.get("message", ""))
-        self.assertIn("మరొక ఫోటో", detail_te.get("message", ""))
 
 
 

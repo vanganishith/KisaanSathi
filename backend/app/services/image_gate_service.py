@@ -22,12 +22,12 @@ EXTREME_BLUR_SHARPNESS = 3.5       # 99.5th percentile edge gradient threshold f
 MODERATE_BLUR_SHARPNESS = 20.0     # Boundary between good and medium/soft focus
 
 FARMER_FRIENDLY_REJECTION_MESSAGES = {
-    "corrupt": "Unable to open the photo. Please take a new photo of the affected plant.",
-    "too_small": "The photo is too small to view the plant clearly. Please capture the leaf or crop a bit closer.",
-    "too_dark": "The photo is too dark to see the plant details. Please take another photo with better lighting or outdoors in daylight.",
-    "too_blurry": "The photo is too blurry to analyze the plant symptoms. Please hold the phone steady and take another photo.",
-    "blank": "The photo does not contain visible plant details. Please capture the affected crop or leaves in the camera frame.",
-    "non_agricultural": "This photo does not appear to show a crop or plant. Please upload a photo of the affected leaves, stem, or crop."
+    "corrupt": "Unable to open image. Please upload a clear photo.",
+    "too_small": "Photo is too small. Please capture closer to the affected plant.",
+    "too_dark": "Photo is too dark. Please take photo in daylight.",
+    "too_blurry": "Photo is too blurry. Please hold steady and take another photo.",
+    "blank": "No visible plant or crop details in the photo.",
+    "non_agricultural": "Uploaded photo does not show a crop or plant. Please upload a photo of the affected crop."
 }
 
 

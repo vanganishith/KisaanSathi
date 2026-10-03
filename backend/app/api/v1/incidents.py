@@ -324,46 +324,46 @@ def _build_localized_photo_retry_message(reason_code: str, crop: Optional[str], 
 
     if target_lang == "te":
         if reason_code == "WRONG_CROP":
-            return f"మీరు పంపిన ఫోటో మీ సమస్యకు లేదా {localized_crop}కు సంబంధించినదిగా కనిపించడం లేదు. మీ వాయిస్ నమోదు భద్రంగా ఉంది. దయచేసి మీ {localized_crop} దెబ్బతిన్న భాగాన్ని స్పష్టంగా చూపిస్తూ మరొక ఫోటో పంపండి."
+            return f"అప్‌లోడ్ చేసిన ఫోటో {localized_crop} పంట సమస్యకు సరిపోలడం లేదు; దయచేసి సరైన పంట ఫోటోను పంపండి."
         elif reason_code == "HEALTHY_CROP":
-            return f"అప్‌లోడ్ చేసిన ఫోటోలో {localized_crop} ఆరోగ్యంగా ఉంది, ఎటువంటి తెగులు లేదా సమస్య కనిపించడం లేదు. మీ వాయిస్ నమోదు భద్రంగా ఉంది. దయచేసి సమస్య ఉన్న భాగాన్ని స్పష్టంగా చూపిస్తూ ఫోటో పంపండి."
+            return f"అప్‌లోడ్ చేసిన ఫోటోలో {localized_crop} పంటకు ఎటువంటి సమస్య కనిపించడం లేదు."
         else:
-            return "సమస్యను అర్థం చేసుకోవడానికి ఫోటో స్పష్టంగా లేదు లేదా పంటకు సంబంధించినది కాదు. మీ వాయిస్ నమోదు భద్రంగా ఉంది. దయచేసి దెబ్బతిన్న మొక్క లేదా ఆకుల స్పష్టమైన ఫోటో పంపండి."
+            return "అప్‌లోడ్ చేసిన ఫోటో వ్యవసాయ సమస్యకు సంబంధించినది కాదు; దయచేసి సమస్య ఉన్న పంట ఫోటోను పంపండి."
     elif target_lang == "hi":
         if reason_code == "WRONG_CROP":
-            return f"अपलोड की गई फोटो आपकी {localized_crop} की समस्या से संबंधित नहीं लग रही है। आपकी आवाज की शिकायत सुरक्षित है। कृपया प्रभावित {localized_crop} की स्पष्ट फोटो भेजें।"
+            return f"अपलोड की गई फोटो {localized_crop} की समस्या से मेल नहीं खाती; कृपया प्रभावित फसल की फोटो भेजें।"
         elif reason_code == "HEALTHY_CROP":
-            return f"अपलोड की गई फोटो में {localized_crop} पर कोई कीट या रोग का लक्षण नहीं दिख रहा है। कृपया प्रभावित या रोगग्रस्त हिस्से की स्पष्ट फोटो भेजें।"
+            return f"अपलोड की गई फोटो में {localized_crop} पर कोई कीट या रोग नहीं दिख रहा है।"
         else:
-            return "समस्या को समझने के लिए फोटो स्पष्ट नहीं है। आपकी आवाज की शिकायत सुरक्षित है। कृपया प्रभावित पौधे की स्पष्ट फोटो भेजें।"
+            return "अपलोड की गई फोटो कृषि समस्या से संबंधित नहीं है; कृपया प्रभावित पौधे की स्पष्ट फोटो भेजें।"
     elif target_lang == "ta":
         if reason_code == "WRONG_CROP":
-            return f"பதிவேற்றப்பட்ட புகைப்படம் உங்கள் {localized_crop} பிரச்சனையுடன் தொடர்புடையதாக தெரியவில்லை. உங்கள் குரல் பதிவு பாதுகாப்பாக உள்ளது. தயவுசெய்து பாதிக்கப்பட்ட {localized_crop} தெளிவான புகைப்படத்தை அனுப்பவும்."
+            return f"பதிவேற்றிய புகைப்படம் {localized_crop} பிரச்சனையுடன் பொருந்தவில்லை; பாதிக்கப்பட்ட பயிரின் புகைப்படத்தை அனுப்பவும்."
         elif reason_code == "HEALTHY_CROP":
-            return f"பதிவேற்றிய புகைப்படத்தில் எந்த சேதமும் தெரியவில்லை. தயவுசெய்து பாதிக்கப்பட்ட பகுதியை தெளிவாக காட்டும் புகைப்படத்தை அனுப்பவும்."
+            return f"பதிவேற்றிய புகைப்படத்தில் {localized_crop} பயிரில் எந்த பிரச்சனையும் தெரியவில்லை."
         else:
-            return "பிரச்சனையை அடையாளம் காண புகைப்படம் தெளிவாக இல்லை. உங்கள் குரல் பதிவு பாதுகாப்பாக உள்ளது. தயவுசெய்து பாதிக்கப்பட்ட செடியின் தெளிவான புகைப்படத்தை அனுப்பவும்."
+            return "பதிவேற்றிய புகைப்படம் விவசாய பிரச்சனையுடன் தொடர்புடையதாக இல்லை; பாதிக்கப்பட்ட பயிரின் புகைப்படத்தை அனுப்பவும்."
     elif target_lang == "kn":
         if reason_code == "WRONG_CROP":
-            return f"ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋ ನಿಮ್ಮ {localized_crop} ಸಮಸ್ಯೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಕಾಣಿಸುತ್ತಿಲ್ಲ. ನಿಮ್ಮ ಧ್ವನಿ ದೂರು ಸುರಕ್ಷಿತವಾಗಿದೆ. ದಯವಿಟ್ಟು ಬಾಧಿತ {localized_crop} ಸ್ಪಷ್ಟ ಫೋಟೋ ಕಳುಹಿಸಿ."
+            return f"ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋ {localized_crop} ಸಮಸ್ಯೆಗೆ ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ; ದಯವಿಟ್ಟು ಬಾಧಿತ ಬೆಳೆಯ ಫೋಟೋ ಕಳುಹಿಸಿ."
         elif reason_code == "HEALTHY_CROP":
-            return f"ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋದಲ್ಲಿ ಯಾವುದೇ ರೋಗ ಅಥವಾ ಹಾನಿಯ ಲಕ್ಷಣಗಳು ಕಂಡುಬರುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಬಾಧಿತ ಭಾಗದ ಸ್ಪಷ್ಟ ಫೋಟೋ ಕಳುಹಿಸಿ."
+            return f"ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋದಲ್ಲಿ {localized_crop} ಬೆಳೆಯಲ್ಲಿ ಯಾವುದೇ ಸಮಸ್ಯೆ ಕಾಣಿಸುತ್ತಿಲ್ಲ."
         else:
-            return "ಸಮಸ್ಯೆಯನ್ನು ಗುರುತಿಸಲು ಫೋಟೋ ಸ್ಪಷ್ಟವಾಗಿಲ್ಲ. ನಿಮ್ಮ ಧ್ವನಿ ದೂರು ಸುರಕ್ಷಿತವಾಗಿದೆ. ದಯವಿಟ್ಟು ಬಾಧಿತ ಸಸ್ಯದ ಸ್ಪಷ್ಟ ಫೋಟೋ ಕಳುಹಿಸಿ."
+            return "ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋ ಕೃಷಿ ಸಮಸ್ಯೆಗೆ ಸಂಬಂಧಿಸಿಲ್ಲ; ದಯವಿಟ್ಟು ಬಾಧಿತ ಬೆಳೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋ ಕಳುಹಿಸಿ."
     elif target_lang == "mr":
         if reason_code == "WRONG_CROP":
-            return f"अपलोड केलेला फोटो तुमच्या {localized_crop} समस्येशी संबंधित दिसत नाही. तुमची व्हॉइस तक्रार सुरक्षित आहे. कृपया बाधित {localized_crop} चा स्पष्ट फोटो पाठवा."
+            return f"अपलोड केलेला फोटो {localized_crop} च्या समस्येशी जुळत नाही; कृपया बाधित पिकाचा फोटो पाठवा."
         elif reason_code == "HEALTHY_CROP":
-            return f"अपलोड केलेल्या फोटोमध्ये कोणतीही कीड किंवा रोग दिसत नाही. कृपया बाधित भागाचा स्पष्ट फोटो पाठवा."
+            return f"अपलोड केलेल्या फोटोमध्ये {localized_crop} पिकावर कोणतीही समस्या दिसत नाही."
         else:
-            return "समस्या समजून घेण्यासाठी फोटो स्पष्ट नाही. तुमची व्हॉइस तक्रार सुरक्षित आहे. कृपया बाधित वनस्पतीचा स्पष्ट फोटो पाठवा."
+            return "अपलोड केलेला फोटो शेतीच्या समस्येशी संबंधित नाही; कृपया बाधित पिकाचा स्पष्ट फोटो पाठवा."
     else:
         if reason_code == "WRONG_CROP":
-            return f"The uploaded photo(s) appear to show a different plant or object than your reported complaint ({localized_crop}). Your voice complaint is safe. Please upload photos of your actual affected {localized_crop}."
+            return f"The uploaded photo does not match your reported {localized_crop} problem. Please upload a photo of the affected crop."
         elif reason_code == "HEALTHY_CROP":
-            return f"The uploaded photo(s) show completely healthy plants with no visible signs of damage, pest, or disease. Please upload a photo clearly showing the affected or damaged parts of your {localized_crop}."
+            return f"The uploaded photo shows a healthy {localized_crop} with no visible disease or pest damage."
         else:
-            return "The uploaded photo(s) did not show recognizable plant or crop problems related to your complaint. Your voice complaint has been preserved. Please upload a clearer photo of the affected plant."
+            return "The uploaded photo is not relevant to the agricultural problem. Please upload a clear photo of the affected plant."
 
 
 
