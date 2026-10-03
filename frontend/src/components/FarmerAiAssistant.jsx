@@ -666,7 +666,10 @@ export default function FarmerAiAssistant({ farmer, onSwitchFarmer }) {
         );
       } catch (e) {}
 
-      setSubmissionSuccess(response);
+      setSubmissionSuccess({
+        ...response,
+        crop: response?.incident?.crop || response?.crop || effectiveCrop,
+      });
       const incId = response.incident_id || response.id;
 
       // SIMILAR ISSUES CHECK:
@@ -1078,7 +1081,14 @@ export default function FarmerAiAssistant({ farmer, onSwitchFarmer }) {
           <div className="submitted-summary-card">
             <div className="summary-row">
               <span className="summary-label">{strings.labelCrop || 'Crop'}:</span>
-              <strong>{submissionSuccess.crop || farmer?.crop || 'Agriculture Crop'}</strong>
+              <strong>
+                {submissionSuccess.crop ||
+                  submissionSuccess.incident?.crop ||
+                  analysisResult?.crop_detected ||
+                  analysisResult?.complaint?.crop ||
+                  farmer?.crop ||
+                  'Agriculture Crop'}
+              </strong>
             </div>
             {transcript && (
               <div className="summary-row">
