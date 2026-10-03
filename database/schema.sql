@@ -1,3 +1,1 @@
--- ==============================================================================
--- RythuBandhu - Phase 2 Database Schema (Supabase PostgreSQL + PostGIS)
--- ==============================================================================
+-- Database schema will be added here.

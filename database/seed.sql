@@ -1,4 +1,1 @@
--- ==============================================================================
--- RythuBandhu - Phase 2 Demo Seed Data (Optional)
--- Clean, realistic demonstration records to verify relations and geospatial queries
--- ==============================================================================
+-- Seed data will be added here.
