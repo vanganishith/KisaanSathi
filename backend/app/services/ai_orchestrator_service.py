@@ -57,7 +57,7 @@ class AIEvidenceContract:
         requires_aeo_review: bool = True,
         visual_detections: Optional[List[Dict[str, Any]]] = None,
         context_summary: Optional[Dict[str, Any]] = None,
-        model_name: str = "f4m1/plant-disease-detector-12 + Qwen2.5-VL",
+        model_name: str = "f4m1/plant-disease-detector-12 + GLM-5.3-Flash",
         model_version: str = "1.0.0"
     ) -> Dict[str, Any]:
         # Clamp scores
@@ -207,7 +207,7 @@ class VisionEngine:
     """
     Orchestrates Dual-Layer visual analysis:
     Layer 1: Visual Localization via fine-tuned YOLO11 ONNX (f4m1/plant-disease-detector-12)
-    Layer 2: Multimodal Reasoning via Qwen2.5-VL / Gemini
+    Layer 2: Multimodal Reasoning via GLM-5.3-Flash / Gemini
     Layer 3: Evidence Fusion
     """
 

@@ -173,9 +173,9 @@ def _extract_entities_rule_based(text: str) -> Dict[str, Any]:
 
 async def _extract_entities_llm(text: str, language: str = "te") -> Dict[str, Any]:
     """
-    Invokes Fireworks AI (or Featherless) to parse multi-sentence, complex colloquial agricultural statements.
+    Invokes Fireworks AI (GLM-5.3-Flash) to parse multi-sentence, complex colloquial agricultural statements.
     """
-    api_key = settings.FIREWORKS_API_KEY or settings.FEATHERLESS_API_KEY
+    api_key = settings.FIREWORKS_API_KEY
     if not api_key:
         return {}
 

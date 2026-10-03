@@ -48,7 +48,7 @@ export default function AnnotatedImageViewer({
 }) {
   const [viewMode, setViewMode] = useState('ai'); // 'ai' | 'original'
   const [showYolo, setShowYolo] = useState(true);
-  const [showQwen, setShowQwen] = useState(true);
+  const [showGlm, setShowGlm] = useState(true);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [naturalDimensions, setNaturalDimensions] = useState(null);
   const imgRef = useRef(null);
@@ -95,7 +95,7 @@ export default function AnnotatedImageViewer({
     return [];
   }, [photoUrl, photos, visionData]);
 
-  // Extract Qwen visual mappings for active photo
+  // Extract GLM visual mappings for active photo
   const activeVisualMappings = useMemo(() => {
     const list = Array.isArray(visualMappings) && visualMappings.length > 0
       ? visualMappings
@@ -277,16 +277,16 @@ export default function AnnotatedImageViewer({
                 alignItems: 'center',
                 gap: '6px',
                 cursor: 'pointer',
-                color: showQwen ? '#a78bfa' : '#64748b',
+                color: showGlm ? '#a78bfa' : '#64748b',
                 fontWeight: 600,
               }}
             >
               <input
                 type="checkbox"
-                checked={showQwen}
-                onChange={(e) => setShowQwen(e.target.checked)}
+                checked={showGlm}
+                onChange={(e) => setShowGlm(e.target.checked)}
                 style={{ accentColor: '#8b5cf6', cursor: 'pointer' }}
-                data-testid="toggle-qwen-layer-checkbox"
+                data-testid="toggle-glm-layer-checkbox"
               />
               <span>🟣 GLM-5.3-Flash Spatial Mappings ({activeVisualMappings.length})</span>
             </label>
@@ -327,8 +327,8 @@ export default function AnnotatedImageViewer({
             data-testid="original-photo-img"
           />
 
-          {/* 2. Transparent Responsive SVG Overlay (Both YOLO and Qwen visual mappings) */}
-          {viewMode === 'ai' && !isAnalysisFailed && ((showYolo && detections.length > 0) || (showQwen && activeVisualMappings.length > 0)) && (
+          {/* 2. Transparent Responsive SVG Overlay (Both YOLO and GLM visual mappings) */}
+          {viewMode === 'ai' && !isAnalysisFailed && ((showYolo && detections.length > 0) || (showGlm && activeVisualMappings.length > 0)) && (
             <svg
               className="vision-svg-overlay"
               viewBox={`0 0 ${imageWidth} ${imageHeight}`}
@@ -347,7 +347,7 @@ export default function AnnotatedImageViewer({
                 <filter id="box-glow-yolo" x="-10%" y="-10%" width="120%" height="120%">
                   <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.8" />
                 </filter>
-                <filter id="box-glow-qwen" x="-10%" y="-10%" width="120%" height="120%">
+                <filter id="box-glow-glm" x="-10%" y="-10%" width="120%" height="120%">
                   <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#1e1b4b" floodOpacity="0.8" />
                 </filter>
               </defs>
@@ -417,7 +417,7 @@ export default function AnnotatedImageViewer({
               })}
 
               {/* LAYER 2: GLM-5.3-Flash Multimodal Visual Mappings (Purple/Indigo) */}
-              {showQwen && activeVisualMappings.map((mapping, mIdx) => {
+              {showGlm && activeVisualMappings.map((mapping, mIdx) => {
                 const nb = mapping.bbox_normalized;
                 if (!nb) return null;
 
@@ -439,7 +439,7 @@ export default function AnnotatedImageViewer({
                 const badgeX = Math.min(x, Math.max(4, imageWidth - badgeWidth - 4));
 
                 return (
-                  <g key={`qwen-mapping-${mIdx}`} className="qwen-mapping-box-group" data-testid={`qwen-mapping-box-${mIdx}`}>
+                  <g key={`glm-mapping-${mIdx}`} className="glm-mapping-box-group" data-testid={`glm-mapping-box-${mIdx}`}>
                     <rect
                       x={x}
                       y={y}
@@ -459,7 +459,7 @@ export default function AnnotatedImageViewer({
                     <rect x={x + width - 6} y={y + height - 6} width={8} height={8} fill="#ffffff" stroke="#8b5cf6" strokeWidth="1.5" />
 
                     {/* Label Badge */}
-                    <g filter="url(#box-glow-qwen)">
+                    <g filter="url(#box-glow-glm)">
                       <rect
                         x={badgeX}
                         y={badgeY}
@@ -622,7 +622,7 @@ export default function AnnotatedImageViewer({
             <div
               className="viewer-detections-list"
               style={{ background: '#1e1b4b', border: '1px solid #4338ca' }}
-              data-testid="qwen-mappings-list"
+              data-testid="glm-mappings-list"
             >
               <h5 className="detections-list-title" style={{ color: '#c4b5fd' }}>
                 🟣 Multimodal Visual Mappings (GLM-5.3-Flash) &bull; Photo {activePhotoIdx + 1} ({activeVisualMappings.length}):
@@ -630,10 +630,10 @@ export default function AnnotatedImageViewer({
               <div className="detection-items-grid">
                 {activeVisualMappings.map((m, mIdx) => (
                   <div
-                    key={`qwen-card-${mIdx}`}
+                    key={`glm-card-${mIdx}`}
                     className="detection-item-card"
                     style={{ background: '#0f172a', border: '1px solid #4f46e5' }}
-                    data-testid={`qwen-mapping-item-${mIdx}`}
+                    data-testid={`glm-mapping-item-${mIdx}`}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>

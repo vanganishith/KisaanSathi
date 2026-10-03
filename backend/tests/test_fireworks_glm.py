@@ -636,7 +636,7 @@ class TestMultimodalGLMPipeline(unittest.TestCase):
     def test_multimodal_evidence_structure_and_dual_layer(self, mock_client_cls):
         import asyncio
 
-        qwen_stage2_response = {
+        glm_stage2_response = {
             "overall_relevance": "RELEVANT",
             "images": [
                 {
@@ -676,7 +676,7 @@ class TestMultimodalGLMPipeline(unittest.TestCase):
         }
 
         mock_resp = MagicMock(status_code=200)
-        mock_resp.json.return_value = {"choices": [{"message": {"content": json.dumps(qwen_stage2_response)}}]}
+        mock_resp.json.return_value = {"choices": [{"message": {"content": json.dumps(glm_stage2_response)}}]}
         mock_client = AsyncMock()
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
@@ -709,14 +709,14 @@ class TestMultimodalGLMPipeline(unittest.TestCase):
             self.assertEqual(res["vision"]["yolo_detections"][0]["detections"][0]["label"], "early_blight")
             self.assertEqual(res["vision"]["yolo_detections"][0]["detections"][0]["bbox"]["x1"], 27)
 
-            # 3. Qwen visual mappings: normalized coordinates between 0 and 1
+            # 3. GLM visual mappings: normalized coordinates between 0 and 1
             mappings = res["visual_mappings"]
             self.assertGreaterEqual(len(mappings), 1)
             box = mappings[0]["bbox_normalized"]
             self.assertTrue(0.0 <= box["x1"] < box["x2"] <= 1.0)
             self.assertTrue(0.0 <= box["y1"] < box["y2"] <= 1.0)
-            self.assertEqual(mappings[0]["source"], "QWEN3_VL")
-            self.assertEqual(mappings[0]["evidence_type"], "QWEN_VISUAL_MAPPING")
+            self.assertEqual(mappings[0]["source"], "GLM_5_3_FLASH")
+            self.assertEqual(mappings[0]["evidence_type"], "GLM_VISUAL_MAPPING")
 
             # 4. Cross validation relationship
             self.assertEqual(res["multimodal_assessment"]["voice_image_relationship"], "CONSISTENT")

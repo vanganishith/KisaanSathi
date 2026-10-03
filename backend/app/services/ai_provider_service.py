@@ -93,7 +93,7 @@ async def call_fireworks_chat(
     if not api_key:
         return None
     
-    model = getattr(settings, "FIREWORKS_LLM_MODEL", "accounts/fireworks/models/qwen2p5-coder-32b-instruct")
+    model = getattr(settings, "FIREWORKS_MODEL_NAME", "accounts/fireworks/models/glm-5p3-flash")
     url = "https://api.fireworks.ai/inference/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -133,7 +133,7 @@ async def call_multimodal_vision(
     if not api_key or not image_base64_list:
         return None
     
-    model = getattr(settings, "FIREWORKS_VISION_MODEL", "accounts/fireworks/models/qwen2p5-vl-72b-instruct")
+    model = getattr(settings, "FIREWORKS_MODEL_NAME", "accounts/fireworks/models/glm-5p3-flash")
     url = "https://api.fireworks.ai/inference/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",

@@ -27,11 +27,6 @@ class Settings(BaseSettings):
     FIREWORKS_API_KEY: str = ""
     FIREWORKS_BASE_URL: str = "https://api.fireworks.ai/inference/v1"
     FIREWORKS_MODEL_NAME: str = "accounts/fireworks/models/glm-5p3-flash"
-
-    # Backward compatibility / fallback aliases
-    FEATHERLESS_API_KEY: str = ""
-    FEATHERLESS_BASE_URL: str = "https://api.fireworks.ai/inference/v1"
-    FEATHERLESS_MODEL_NAME: str = "accounts/fireworks/models/glm-5p3-flash"
     GOOGLE_API_KEY: str = ""
 
     model_config = SettingsConfigDict(

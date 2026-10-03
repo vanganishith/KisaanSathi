@@ -157,7 +157,7 @@ CRITICAL INSTRUCTIONS & SPECIALIZATION:
    - "HEALTHY_CROP": Only if the crop is 100% visibly pristine with zero signs of distress.
    OTHER STATUSES: "NON_RELEVANT", "NON_AGRICULTURAL", "ANALYSIS_FAILED".
 
-4. QWEN SPATIAL MAPPING / VISUAL LOCALIZATION:
+4. GLM SPATIAL MAPPING / VISUAL LOCALIZATION:
    - For every meaningful visible symptom or suspected problem area, identify approximately where it appears in the image.
    - Return normalized bounding boxes between 0.0 and 1.0:
      {
@@ -170,7 +170,7 @@ CRITICAL INSTRUCTIONS & SPECIALIZATION:
          "x2": 0.45,
          "y2": 0.52
        },
-       "evidence_type": "QWEN_VISUAL_MAPPING"
+       "evidence_type": "GLM_VISUAL_MAPPING"
      }
    - Coordinates must satisfy: 0.0 <= x1 < x2 <= 1.0 and 0.0 <= y1 < y2 <= 1.0.
    - If something cannot be reliably localized, return spatial_mappings as [].
@@ -214,7 +214,7 @@ RETURN ONLY A STRICT VALID JSON OBJECT matching this schema:
             "x2": 0.48,
             "y2": 0.55
           },
-          "evidence_type": "QWEN_VISUAL_MAPPING"
+          "evidence_type": "GLM_VISUAL_MAPPING"
         }
       ]
     }
@@ -228,7 +228,7 @@ RETURN ONLY A STRICT VALID JSON OBJECT matching this schema:
     "contradictions": []
   },
   "multimodal_assessment": {
-    "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+    "model": "accounts/fireworks/models/glm-5p3-flash",
     "voice_image_relationship": "CONSISTENT",
     "confidence": 0.85,
     "reasoning": "Visual evidence is broadly consistent with the farmer's report of spots on tomato leaves. Bounding boxes highlight the affected lesion areas. AEO verification required.",
@@ -352,9 +352,9 @@ async def _call_fireworks_chat(messages: List[Dict[str, Any]], temperature: floa
     Calls Fireworks AI chat completions API with accounts/fireworks/models/glm-5p3-flash.
     Uses max_tokens=6144 to prevent token exhaustion by GLM reasoning tokens.
     """
-    api_key = settings.FIREWORKS_API_KEY or settings.FEATHERLESS_API_KEY
-    base_url = (settings.FIREWORKS_BASE_URL or settings.FEATHERLESS_BASE_URL or "https://api.fireworks.ai/inference/v1").rstrip("/")
-    model_name = settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash"
+    api_key = settings.FIREWORKS_API_KEY
+    base_url = (settings.FIREWORKS_BASE_URL or "https://api.fireworks.ai/inference/v1").rstrip("/")
+    model_name = settings.FIREWORKS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash"
 
     if not api_key or not api_key.strip():
         logger.warning("[Fireworks AI] API key is not configured. Raising ValueError for caller fallback.")
@@ -395,8 +395,6 @@ async def _call_fireworks_chat(messages: List[Dict[str, Any]], temperature: floa
         return content
 
 
-# Backward-compatible alias for existing functions and imports
-_call_featherless_chat = _call_fireworks_chat
 
 
 def _build_localized_farmer_response(
@@ -941,7 +939,7 @@ async def evaluate_multimodal_evidence(
                 "contradictions": []
             },
             "multimodal_assessment": {
-                "model": settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME,
+                "model": settings.FIREWORKS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash",
                 "voice_image_relationship": "INSUFFICIENT_EVIDENCE",
                 "confidence": 0.0,
                 "reasoning": "No photographic evidence submitted. AEO manual field verification required.",
@@ -953,7 +951,7 @@ async def evaluate_multimodal_evidence(
             "visual_mappings": [],
             "vision": {
                 "yolo_detections": yolo_findings or [],
-                "qwen_visual_findings": []
+                "glm_visual_findings": []
             },
             "safe_aeo_approach": "Field verification recommended by AEO officer."
         }
@@ -1033,7 +1031,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
         # Process and sanitize per-image spatial mappings
         all_visual_mappings = []
         sanitized_images = []
-        qwen_visual_findings = []
+        glm_visual_findings = []
 
         for idx, img in enumerate(raw_images):
             img_idx = img.get("image_index", idx + 1)
@@ -1050,8 +1048,8 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
                         "description": str(m.get("description") or m.get("label") or "Observed symptom area"),
                         "confidence": float(m.get("confidence") or 0.82),
                         "bbox_normalized": clean_box,
-                        "source": "QWEN3_VL",
-                        "evidence_type": "QWEN_VISUAL_MAPPING"
+                        "source": "GLM_5_3_FLASH",
+                        "evidence_type": "GLM_VISUAL_MAPPING"
                     }
                     clean_mappings.append(map_item)
                     all_visual_mappings.append(map_item)
@@ -1061,11 +1059,11 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
             sanitized_images.append(img_copy)
 
             if img.get("visual_evidence") and isinstance(img["visual_evidence"], list):
-                qwen_visual_findings.extend(img["visual_evidence"])
+                glm_visual_findings.extend(img["visual_evidence"])
 
         # Ensure structured multimodal_assessment format
         final_multimodal_assessment = {
-            "model": settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME,
+            "model": settings.FIREWORKS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash",
             "voice_image_relationship": rel,
             "confidence": float(multimodal_assessment.get("confidence") or voice_image_assessment.get("confidence") or 0.85),
             "reasoning": reasoning,
@@ -1118,7 +1116,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
             "visual_mappings": all_visual_mappings,
             "vision": {
                 "yolo_detections": yolo_findings or [],
-                "qwen_visual_findings": list(set(qwen_visual_findings))
+                "glm_visual_findings": list(set(glm_visual_findings))
             }
         }
 
@@ -1296,7 +1294,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
         )
 
         fallback_multimodal = {
-            "model": f"{settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME} (Agronomic Synthesis)",
+            "model": f"{settings.FIREWORKS_MODEL_NAME or 'accounts/fireworks/models/glm-5p3-flash'} (Agronomic Synthesis)",
             "primary_disease": primary_disease,
             "scientific_name": scientific_name,
             "pathogen_type": pathogen_type,
@@ -1344,7 +1342,7 @@ HACKATHON EVALUATION GUIDELINES (SUPPORTIVE & FORGIVING):
             "visual_mappings": [],
             "vision": {
                 "yolo_detections": yolo_findings or [],
-                "qwen_visual_findings": []
+                "glm_visual_findings": []
             }
         }
 
@@ -1586,7 +1584,7 @@ async def extract_agricultural_meaning(
         "possible_conditions": [complaint.get("suspected_problem")] if complaint.get("suspected_problem") else [],
         "llm_summary": complaint.get("farmer_concern") or transcript[:200],
         "requires_aeo_review": True,
-        "model_name": settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME,
+        "model_name": settings.FIREWORKS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash",
         "model_version": "3.0-vl"
     }
 
@@ -1868,7 +1866,7 @@ def _deterministic_symptom_similarity_fallback(
     return results
 
 
-async def evaluate_candidate_similarity_qwen(
+async def evaluate_candidate_similarity_glm(
     current_case: Dict[str, Any],
     candidate_cases: List[Dict[str, Any]],
     language: str = "Telugu"
@@ -1930,7 +1928,7 @@ Produce "why_similar" in {language} for genuine matches."""
         if isinstance(matches, list) and len(matches) > 0:
             return matches
     except Exception as exc:
-        logger.warning(f"[LLM] evaluate_candidate_similarity_qwen failed ({exc}). Using deterministic fallback.")
+        logger.warning(f"[LLM] evaluate_candidate_similarity_glm failed ({exc}). Using deterministic fallback.")
 
     return _deterministic_symptom_similarity_fallback(current_case, candidate_cases, language=language)
 

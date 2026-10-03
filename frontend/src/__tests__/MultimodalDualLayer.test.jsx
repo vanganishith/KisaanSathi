@@ -28,13 +28,13 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
       description: 'Necrotic foliar lesion with concentric rings and chlorotic halo',
       confidence: 0.88,
       bbox_normalized: { x1: 0.15, y1: 0.2, x2: 0.48, y2: 0.55 },
-      source: 'QWEN3_VL',
-      evidence_type: 'QWEN_VISUAL_MAPPING',
+      source: 'GLM_5_3_FLASH',
+      evidence_type: 'GLM_VISUAL_MAPPING',
     },
   ];
 
   const sampleMultimodalAssessment = {
-    model: 'Qwen/Qwen3-VL-30B-A3B-Instruct',
+    model: 'accounts/fireworks/models/glm-5p3-flash',
     voice_image_relationship: 'CONSISTENT',
     confidence: 0.88,
     reasoning: 'Reported expanding brown leaf spots align with visible circular necrotic lesions on tomato foliage.',
@@ -50,7 +50,7 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
     ],
   };
 
-  it('renders both YOLO11 and Qwen3-VL bounding boxes in dual-layer viewer', () => {
+  it('renders both YOLO11 and GLM-5.3-Flash bounding boxes in dual-layer viewer', () => {
     render(
       <AnnotatedImageViewer
         photoUrl={samplePhotoUrl}
@@ -62,16 +62,16 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
     // Both layers are active by default
     expect(screen.getByTestId('vision-svg-overlay')).toBeDefined();
     expect(screen.getByTestId('detection-box-0')).toBeDefined();
-    expect(screen.getByTestId('qwen-mapping-box-0')).toBeDefined();
+    expect(screen.getByTestId('glm-mapping-box-0')).toBeDefined();
 
     // Detections & Mappings breakdown lists
     expect(screen.getByTestId('detections-list')).toBeDefined();
-    expect(screen.getByTestId('qwen-mappings-list')).toBeDefined();
+    expect(screen.getByTestId('glm-mappings-list')).toBeDefined();
     expect(screen.getByText(/Computer Vision Detections \(YOLO11\)/i)).toBeDefined();
     expect(screen.getByText(/Multimodal Visual Mappings \(GLM-5.3-Flash\)/i)).toBeDefined();
   });
 
-  it('allows toggling YOLO11 layer off while keeping Qwen3-VL spatial mappings visible', () => {
+  it('allows toggling YOLO11 layer off while keeping GLM-5.3-Flash spatial mappings visible', () => {
     render(
       <AnnotatedImageViewer
         photoUrl={samplePhotoUrl}
@@ -87,12 +87,12 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
     fireEvent.click(yoloCheckbox);
     expect(yoloCheckbox.checked).toBe(false);
 
-    // YOLO box should be hidden, Qwen box still rendered
+    // YOLO box should be hidden, GLM box still rendered
     expect(screen.queryByTestId('detection-box-0')).toBeNull();
-    expect(screen.getByTestId('qwen-mapping-box-0')).toBeDefined();
+    expect(screen.getByTestId('glm-mapping-box-0')).toBeDefined();
   });
 
-  it('allows toggling Qwen3-VL layer off while keeping YOLO11 detections visible', () => {
+  it('allows toggling GLM-5.3-Flash layer off while keeping YOLO11 detections visible', () => {
     render(
       <AnnotatedImageViewer
         photoUrl={samplePhotoUrl}
@@ -101,15 +101,15 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
       />
     );
 
-    const qwenCheckbox = screen.getByTestId('toggle-qwen-layer-checkbox');
-    expect(qwenCheckbox.checked).toBe(true);
+    const glmCheckbox = screen.getByTestId('toggle-glm-layer-checkbox');
+    expect(glmCheckbox.checked).toBe(true);
 
-    // Toggle off Qwen
-    fireEvent.click(qwenCheckbox);
-    expect(qwenCheckbox.checked).toBe(false);
+    // Toggle off GLM
+    fireEvent.click(glmCheckbox);
+    expect(glmCheckbox.checked).toBe(false);
 
-    // Qwen box should be hidden, YOLO box still rendered
-    expect(screen.queryByTestId('qwen-mapping-box-0')).toBeNull();
+    // GLM box should be hidden, YOLO box still rendered
+    expect(screen.queryByTestId('glm-mapping-box-0')).toBeNull();
     expect(screen.getByTestId('detection-box-0')).toBeDefined();
   });
 

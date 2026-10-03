@@ -80,8 +80,8 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
             "possible_conditions": ["Chilli Leaf Curl Virus"],
             "llm_summary": "Farmer reports chilli leaf curling and whitefly infestation.",
             "requires_aeo_review": True,
-            "model_name": "Qwen/Qwen3-VL-30B-A3B-Instruct",
-            "model_version": "3.0-vl"
+            "model_name": "accounts/fireworks/models/glm-5p3-flash",
+            "model_version": "5.3-flash"
         }
         mock_db.table.return_value.insert.return_value.execute.return_value.data = [{"id": str(uuid.uuid4())}]
 

@@ -12,7 +12,7 @@ from app.services.incident_service import (
     format_incident_location,
     get_or_create_farmer,
 )
-from app.services.llm_service import evaluate_candidate_similarity_qwen
+from app.services.llm_service import evaluate_candidate_similarity_glm
 
 logger = logging.getLogger("kisaansathi.similar_issues")
 
@@ -339,15 +339,15 @@ async def find_similar_issues(
     top_candidates = candidates_for_eval[:4]
 
     # 4. Invoke Fireworks AI (GLM-5.3-Flash) for semantic symptom reasoning
-    qwen_evaluations = await evaluate_candidate_similarity_qwen(
+    glm_evaluations = await evaluate_candidate_similarity_glm(
         current_case=current_case_data,
         candidate_cases=top_candidates,
         language=language
     )
 
-    qwen_by_id = {}
-    for ev in qwen_evaluations:
-        qwen_by_id[str(ev.get("candidate_id"))] = ev
+    glm_by_id = {}
+    for ev in glm_evaluations:
+        glm_by_id[str(ev.get("candidate_id"))] = ev
 
     # 5. Composite Ranking:
     # 40% semantic/symptom + 20% crop + 15% AEO verification + 15% distance + 10% recency
@@ -355,7 +355,7 @@ async def find_similar_issues(
     for cand in top_candidates:
         cid = cand["id"]
         meta = candidates_metadata[cid]
-        q_ev = qwen_by_id.get(cid, {})
+        q_ev = glm_by_id.get(cid, {})
 
         is_similar = bool(q_ev.get("is_genuinely_similar", False))
         if not is_similar:

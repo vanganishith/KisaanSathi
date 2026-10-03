@@ -76,7 +76,7 @@ def localize_advisory_text(advisory_text: str, target_language: str) -> str:
     if lang_code == "en":
         return clean_text
 
-    api_key = settings.FIREWORKS_API_KEY or settings.FEATHERLESS_API_KEY
+    api_key = settings.FIREWORKS_API_KEY
     if not api_key or not api_key.strip():
         logger.info("No Fireworks API key configured for advisory localization. Returning original text.")
         return clean_text
@@ -91,14 +91,14 @@ def localize_advisory_text(advisory_text: str, target_language: str) -> str:
         f"4. Output ONLY the translated message in {target_name} script (no Romanized transliteration, no quotes, no conversational filler).\n"
     )
 
-    base_url = (settings.FIREWORKS_BASE_URL or settings.FEATHERLESS_BASE_URL or "https://api.fireworks.ai/inference/v1").rstrip("/")
+    base_url = (settings.FIREWORKS_BASE_URL or "https://api.fireworks.ai/inference/v1").rstrip("/")
     url = f"{base_url}/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key.strip()}",
         "Content-Type": "application/json"
     }
     payload = {
-        "model": settings.FIREWORKS_MODEL_NAME or settings.FEATHERLESS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash",
+        "model": settings.FIREWORKS_MODEL_NAME or "accounts/fireworks/models/glm-5p3-flash",
         "messages": [
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": f"Translate this officer advisory to {target_name}:\n{clean_text}"}
