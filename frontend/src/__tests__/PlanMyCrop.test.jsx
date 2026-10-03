@@ -172,4 +172,35 @@ describe('PlanMyCropPage Component (AI Crop Planning)', () => {
 
     expect(screen.getByTestId('acres-count')).toBeInTheDocument();
   });
+
+  it('renders minimal recommendation card and expands on click to reveal financial breakdown', async () => {
+    vi.spyOn(api, 'getCropPlanningRecommendations').mockResolvedValue(mockRecommendationResponse);
+
+    renderWithLanguage(<PlanMyCropPage />);
+
+    const submitBtn = screen.getByTestId('submit-crop-planning');
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Cotton (Bt Cotton)')).toBeInTheDocument();
+    });
+
+    // Recommendation 1 is expanded initially (index 0)
+    expect(screen.getByText(/అంచనా పెట్టుబడి|Estimated Investment/i)).toBeInTheDocument();
+
+    // Click collapse on card 1
+    const collapseBtn = screen.getByRole('button', { name: /Collapse|కుదించు/i });
+    fireEvent.click(collapseBtn);
+
+    // After collapsing, the detailed financial breakdown is hidden
+    expect(screen.queryByText(/అంచనా పెట్టుబడి|Estimated Investment/i)).not.toBeInTheDocument();
+
+    // Click card summary row to expand again
+    const cropHeader = screen.getByText('Cotton (Bt Cotton)');
+    fireEvent.click(cropHeader);
+
+    // Financial breakdown is visible again
+    expect(screen.getByText(/అంచనా పెట్టుబడి|Estimated Investment/i)).toBeInTheDocument();
+  });
 });
+

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { getCropPlanningRecommendations, selectCropForFarm, getUnifiedFarmContext } from '../services/api';
+import './PlanMyCropPage.css';
 
 export default function PlanMyCropPage() {
   const { currentLang } = useLanguage();
@@ -20,6 +21,7 @@ export default function PlanMyCropPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [expandedIndex, setExpandedIndex] = useState(0);
 
   // Confirmation Step State
   const [selectedCropConfirm, setSelectedCropConfirm] = useState(null);
@@ -656,194 +658,222 @@ export default function PlanMyCropPage() {
         /* RESULTS VIEW */
         <div>
           {/* CONTEXT SUMMARY CARD */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px', marginBottom: '16px' }}>
-              <div style={{ backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', display: 'block' }}>
-                  📍 {t.contextLocation}
-                </span>
-                <strong style={{ fontSize: '0.9375rem', color: '#0f172a' }}>
+          <div className="plan-results-summary-card">
+            <div className="plan-summary-pills-row">
+              <div className="plan-summary-pill">
+                <span className="plan-summary-pill-label">📍 {t.contextLocation}</span>
+                <span className="plan-summary-pill-value">
                   {result.summary?.location_label || result.input?.location}
-                </strong>
+                </span>
               </div>
 
-              <div style={{ backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', display: 'block' }}>
-                  🌱 {t.contextSeason}
-                </span>
-                <strong style={{ fontSize: '0.9375rem', color: '#047857' }}>
+              <div className="plan-summary-pill">
+                <span className="plan-summary-pill-label">🌱 {t.contextSeason}</span>
+                <span className="plan-summary-pill-value" style={{ color: '#047857' }}>
                   {result.summary?.season_label}
-                </strong>
+                </span>
               </div>
 
-              <div style={{ backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', display: 'block' }}>
-                  🌾 {t.contextSoil}
-                </span>
-                <strong style={{ fontSize: '0.9375rem', color: '#0f172a' }}>
+              <div className="plan-summary-pill">
+                <span className="plan-summary-pill-label">🌾 {t.contextSoil}</span>
+                <span className="plan-summary-pill-value">
                   {result.summary?.soil_label}
-                </strong>
+                </span>
               </div>
 
-              <div style={{ backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', display: 'block' }}>
-                  📐 {t.contextLand}
-                </span>
-                <strong style={{ fontSize: '0.9375rem', color: '#15803d' }}>
+              <div className="plan-summary-pill">
+                <span className="plan-summary-pill-label">📐 {t.contextLand}</span>
+                <span className="plan-summary-pill-value" style={{ color: '#15803d' }}>
                   {result.summary?.land_label}
-                </strong>
+                </span>
               </div>
             </div>
 
-            <p style={{ margin: 0, fontSize: '0.9375rem', color: '#334155', fontWeight: '600' }}>
+            <p className="plan-summary-intro">
               {result.summary?.intro_text}
             </p>
           </div>
 
-          {/* RECOMMENDED CROPS */}
-          <h2 style={{ fontSize: '1.375rem', fontWeight: '800', color: '#0f172a', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* RECOMMENDED CROPS HEADING */}
+          <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>🌱</span> {t.resultsHeading}
           </h2>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '32px' }}>
-            {result.recommendations?.map((rec, index) => (
-              <div
-                key={index}
-                style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
-                  borderLeft: '5px solid #15803d',
-                }}
-              >
-                {/* Crop Name & Index */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ width: '32px', height: '32px', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '1rem' }}>
-                      {index + 1}
-                    </span>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>
-                      {rec.crop_name}
-                    </h3>
-                  </div>
+          {/* RECOMMENDED CROPS - MINIMAL & EXPANDABLE LIST */}
+          <div className="plan-recommendations-list">
+            {result.recommendations?.map((rec, index) => {
+              const isExpanded = expandedIndex === index;
 
-                  <span style={{ fontSize: '0.75rem', fontWeight: '700', padding: '4px 10px', borderRadius: '20px', backgroundColor: '#f1f5f9', color: '#475569' }}>
-                    ⏳ {t.durationLabel} <strong>{rec.estimated_duration}</strong>
-                  </span>
-                </div>
-
-                {/* Reason why it suits */}
-                <div style={{ marginBottom: '16px', fontSize: '0.875rem', color: '#334155', lineHeight: 1.5 }}>
-                  <strong style={{ color: '#0f172a' }}>{t.whySuitable} </strong>
-                  {rec.reason}
-                </div>
-
-                {/* INVESTMENT & RETURN BREAKDOWN (PER ACRE & FOR TOTAL LAND) */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px', marginBottom: '16px' }}>
-                  {/* Investment Box */}
-                  <div style={{ backgroundColor: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '14px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: '#9a3412' }}>
-                        💰 {t.investmentHeading}
-                      </span>
-                      <span style={{ fontSize: '0.6875rem', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#ffedd5', color: '#c2410c' }}>
-                        {t.estimatedTag}
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: '0.8125rem', color: '#431407', marginBottom: '6px' }}>
-                      {t.perAcre}: <strong>₹{rec.estimated_investment_per_acre?.toLocaleString('en-IN')}</strong>
-                    </div>
-
-                    <div style={{ fontSize: '1.0625rem', fontWeight: '900', color: '#c2410c', borderTop: '1px dashed #fed7aa', paddingTop: '6px' }}>
-                      {t.forYourLand} {acres} {t.acresLabel}: ₹{rec.estimated_total_investment?.toLocaleString('en-IN')}
-                    </div>
-                  </div>
-
-                  {/* Return Box */}
-                  <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '14px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: '#166534' }}>
-                        📈 {t.returnHeading}
-                      </span>
-                      <span style={{ fontSize: '0.6875rem', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#dcfce7', color: '#15803d' }}>
-                        {t.estimatedTag}
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: '0.8125rem', color: '#14532d', marginBottom: '6px' }}>
-                      {t.perAcre}: <strong>₹{rec.estimated_return_per_acre_min?.toLocaleString('en-IN')} – ₹{rec.estimated_return_per_acre_max?.toLocaleString('en-IN')}</strong>
-                    </div>
-
-                    <div style={{ fontSize: '1.0625rem', fontWeight: '900', color: '#15803d', borderTop: '1px dashed #bbf7d0', paddingTop: '6px' }}>
-                      {t.forYourLand} {acres} {t.acresLabel}: ₹{rec.estimated_total_return_min?.toLocaleString('en-IN')} – ₹{rec.estimated_total_return_max?.toLocaleString('en-IN')}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Key Risk / Precaution */}
-                <div style={{ backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '8px', borderLeft: '3px solid #f59e0b', fontSize: '0.8125rem', color: '#475569', marginBottom: '18px' }}>
-                  <strong style={{ color: '#b45309' }}>⚠️ {t.keyRiskLabel} </strong>
-                  {rec.risk_note}
-                </div>
-
-                {/* PRIMARY ACTION CTA: Continue with this crop */}
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleSelectCrop(rec)}
-                    data-testid={`continue-crop-${index}`}
-                    style={{
-                      flex: 1,
-                      minWidth: '200px',
-                      padding: '12px 20px',
-                      backgroundColor: '#15803d',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontWeight: '800',
-                      fontSize: '0.9375rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      boxShadow: '0 2px 8px rgba(21, 128, 61, 0.25)',
-                      transition: 'all 0.15s ease',
+              return (
+                <div
+                  key={index}
+                  className={`plan-crop-card-minimal ${isExpanded ? 'is-expanded' : ''}`}
+                >
+                  {/* Minimal Summary Row */}
+                  <div
+                    className="plan-crop-summary-row"
+                    onClick={() => setExpandedIndex(isExpanded ? null : index)}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isExpanded}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpandedIndex(isExpanded ? null : index);
+                      }
                     }}
                   >
-                    <span>🌱</span> {t.continueWithCrop} {rec.crop_name}
-                  </button>
+                    <div className="plan-crop-summary-content">
+                      <div className="plan-crop-header-row">
+                        <span className="plan-crop-rank-badge">
+                          {index + 1}
+                        </span>
+                        <h3 className="plan-crop-name">
+                          {rec.crop_name}
+                        </h3>
+                        <span className="plan-crop-duration-badge">
+                          ⏳ {rec.estimated_duration}
+                        </span>
+                        {rec.estimated_return_per_acre_min && (
+                          <span className="plan-crop-return-chip">
+                            📈 Est. ₹{rec.estimated_return_per_acre_min?.toLocaleString('en-IN')} – ₹{rec.estimated_return_per_acre_max?.toLocaleString('en-IN')} / acre
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="plan-crop-teaser">
+                        <strong style={{ color: '#0f172a' }}>{t.whySuitable} </strong>
+                        {rec.reason}
+                      </p>
+
+                      <div className="plan-crop-action-footer">
+                        <span className="plan-crop-expand-toggle">
+                          {isExpanded ? '▴ Hide details' : '▾ Click to view full breakdown & care tips'}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn-select-crop-inline"
+                          data-testid={`continue-crop-${index}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectCrop(rec);
+                          }}
+                        >
+                          🌱 {t.continueWithCrop}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expanded Detail Tray */}
+                  {isExpanded && (
+                    <div className="plan-crop-expanded-tray">
+                      {/* Detailed Reason Box */}
+                      <div className="plan-crop-reason-box">
+                        <strong style={{ display: 'block', marginBottom: '4px', color: '#1e40af' }}>
+                          💡 {t.whySuitable}
+                        </strong>
+                        {rec.reason}
+                      </div>
+
+                      {/* Financial Breakdown Grid */}
+                      <div className="plan-finance-grid">
+                        {/* Investment Box */}
+                        <div className="plan-finance-box investment">
+                          <div className="plan-finance-box-header">
+                            <span className="plan-finance-box-title">
+                              💰 {t.investmentHeading}
+                            </span>
+                            <span style={{ fontSize: '0.6875rem', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#ffedd5', color: '#c2410c' }}>
+                              {t.estimatedTag}
+                            </span>
+                          </div>
+
+                          <div className="plan-finance-rate" style={{ color: '#431407' }}>
+                            {t.perAcre}: <strong>₹{rec.estimated_investment_per_acre?.toLocaleString('en-IN')}</strong>
+                          </div>
+
+                          <div className="plan-finance-total">
+                            {t.forYourLand} {acres} {t.acresLabel}: ₹{rec.estimated_total_investment?.toLocaleString('en-IN')}
+                          </div>
+                        </div>
+
+                        {/* Return Box */}
+                        <div className="plan-finance-box revenue">
+                          <div className="plan-finance-box-header">
+                            <span className="plan-finance-box-title">
+                              📈 {t.returnHeading}
+                            </span>
+                            <span style={{ fontSize: '0.6875rem', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#dcfce7', color: '#15803d' }}>
+                              {t.estimatedTag}
+                            </span>
+                          </div>
+
+                          <div className="plan-finance-rate" style={{ color: '#14532d' }}>
+                            {t.perAcre}: <strong>₹{rec.estimated_return_per_acre_min?.toLocaleString('en-IN')} – ₹{rec.estimated_return_per_acre_max?.toLocaleString('en-IN')}</strong>
+                          </div>
+
+                          <div className="plan-finance-total">
+                            {t.forYourLand} {acres} {t.acresLabel}: ₹{rec.estimated_total_return_min?.toLocaleString('en-IN')} – ₹{rec.estimated_total_return_max?.toLocaleString('en-IN')}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Key Risk / Precaution */}
+                      {rec.risk_note && (
+                        <div className="plan-risk-box">
+                          <strong style={{ color: '#b45309' }}>⚠️ {t.keyRiskLabel} </strong>
+                          {rec.risk_note}
+                        </div>
+                      )}
+
+                      {/* Expanded CTA Bar */}
+                      <div className="plan-expanded-cta-bar">
+                        <button
+                          type="button"
+                          className="btn-proceed-crop-large"
+                          onClick={() => handleSelectCrop(rec)}
+                        >
+                          <span>🌱</span> {t.continueWithCrop} {rec.crop_name}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-collapse-crop-tray"
+                          onClick={() => setExpandedIndex(null)}
+                        >
+                          ⌃ Collapse
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* GOVERNMENT SCHEMES & SUPPORT SECTION */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '28px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+          <div className="plan-schemes-card">
             <h3 style={{ margin: '0 0 8px', fontSize: '1.1875rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span>🏛️</span> {t.govSupportTitle}
             </h3>
 
             {result.has_government_support && result.government_support?.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
                 {result.government_support.map((sch, i) => (
-                  <div key={i} style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px' }}>
-                    <div style={{ fontWeight: '800', fontSize: '1rem', color: '#1e40af', marginBottom: '6px' }}>
+                  <div key={i} className="plan-scheme-item">
+                    <div style={{ fontWeight: '800', fontSize: '0.98rem', color: '#1e40af', marginBottom: '6px' }}>
                       📋 {sch.name}
                     </div>
-                    <div style={{ fontSize: '0.8125rem', color: '#334155', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.825rem', color: '#334155', marginBottom: '4px' }}>
                       <strong>{t.whatSupports}</strong> {sch.what_it_supports}
                     </div>
-                    <div style={{ fontSize: '0.8125rem', color: '#0369a1', marginBottom: '6px', fontWeight: '600' }}>
+                    <div style={{ fontSize: '0.825rem', color: '#0369a1', marginBottom: '4px', fontWeight: '600' }}>
                       💡 {sch.relevance}
                     </div>
-                    <div style={{ fontSize: '0.8125rem', color: '#475569', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '0.825rem', color: '#475569', marginBottom: '4px' }}>
                       <strong>{t.howToApply}</strong> {sch.how_to_apply}
                     </div>
-                    <div style={{ fontSize: '0.6875rem', color: '#64748b' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
                       <strong>{t.sourceLabel}</strong> {sch.source}
                     </div>
                   </div>
@@ -855,13 +885,13 @@ export default function PlanMyCropPage() {
               </div>
             )}
 
-            <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+            <div style={{ marginTop: '14px', fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
               {t.govNotice}
             </div>
           </div>
 
           {/* DISCLAIMER BOX */}
-          <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', marginBottom: '28px', fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.5 }}>
+          <div style={{ backgroundColor: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '14px', padding: '14px 18px', marginBottom: '28px', fontSize: '0.8rem', color: '#64748b', lineHeight: 1.5 }}>
             <strong>📌 Disclaimer:</strong> {result.disclaimer}
           </div>
 
@@ -874,13 +904,14 @@ export default function PlanMyCropPage() {
               style={{
                 padding: '12px 28px',
                 borderRadius: '10px',
-                border: '1px solid #cbd5e1',
+                border: '1.5px solid #cbd5e1',
                 backgroundColor: '#ffffff',
                 color: '#0f172a',
                 fontWeight: '700',
-                fontSize: '0.9375rem',
+                fontSize: '0.925rem',
                 cursor: 'pointer',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                transition: 'all 0.15s ease',
               }}
             >
               {t.planAnother}
