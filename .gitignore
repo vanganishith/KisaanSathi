@@ -1,9 +1,28 @@
+# Node modules & builds
 node_modules/
-.env
-.env.*
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Python Virtual Environments & caches
+venv/
+backend/venv/
 __pycache__/
 *.pyc
-venv/
-.venv/
-dist/
-build/
+*.pyo
+*.pyd
+.pytest_cache/
+backend/.pytest_cache/
+
+# Audio / file uploads
+backend/uploads/audio/
+backend/uploads/photos/
+
+# Environment configs & local secrets
+.env
+backend/.env
+frontend/.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
