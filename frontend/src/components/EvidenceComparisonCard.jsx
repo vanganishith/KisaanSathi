@@ -532,7 +532,7 @@ export default function EvidenceComparisonCard({ incident, simplifiedView = fals
               <span className="panel-subtitle">Multimodal cross-validation comparing farmer voice and visual evidence</span>
             </div>
           </div>
-          <span className="provenance-chip" style={{ background: '#ede9fe', color: '#6d28d9' }}>Qwen3-VL Cross-Validation</span>
+          <span className="provenance-chip" style={{ background: '#ede9fe', color: '#6d28d9' }}>GLM-5.3-Flash Cross-Validation</span>
         </div>
 
         <div className="evidence-panel-body" data-testid="voice-image-cross-review">
@@ -797,7 +797,7 @@ export default function EvidenceComparisonCard({ incident, simplifiedView = fals
               </div>
 
               <div style={{ fontSize: '0.775rem', color: '#64748b', fontStyle: 'italic', borderTop: '1px solid #e2e8f0', marginTop: '10px', paddingTop: '8px' }}>
-                ℹ️ Preliminary AI cross-review based on Featherless Qwen3-VL multimodal reasoning. Symptoms and diseases are tentative indications. Final agricultural authority belongs to the Agricultural Extension Officer.
+                ℹ️ Preliminary AI cross-review based on Fireworks AI (GLM-5.3-Flash) multimodal reasoning. Symptoms and diseases are tentative indications. Final agricultural authority belongs to the Agricultural Extension Officer.
               </div>
             </div>
           ) : (

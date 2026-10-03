@@ -71,7 +71,7 @@ export default function FarmerAiAssistant({ farmer, onSwitchFarmer }) {
   const [isProcessingAsr, setIsProcessingAsr] = useState(false);
   const [isAnalyzingIntent, setIsAnalyzingIntent] = useState(false);
 
-  // Analysis result from Featherless Qwen3-VL
+  // Analysis result from Fireworks AI (GLM-5.3-Flash)
   const [transcript, setTranscript] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
   const [clarificationActive, setClarificationActive] = useState(false);
@@ -296,7 +296,7 @@ export default function FarmerAiAssistant({ farmer, onSwitchFarmer }) {
   };
 
   // =========================================================================
-  // ASR & FEATHERLESS QWEN3-VL UNDERSTANDING
+  // ASR & FIREWORKS AI (GLM-5.3-FLASH) UNDERSTANDING
   // =========================================================================
   const processVoiceInput = async (audioFile) => {
     setIsProcessingAsr(true);
@@ -327,7 +327,7 @@ export default function FarmerAiAssistant({ farmer, onSwitchFarmer }) {
 
     setTranscript(finalTranscript);
 
-    // Analyze with Featherless Qwen3-VL
+    // Analyze with Fireworks AI (GLM-5.3-Flash)
     setIsAnalyzingIntent(true);
     try {
       const analysis = await analyzeConfirmedTranscript(finalTranscript, currentLanguageName);

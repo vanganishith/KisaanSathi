@@ -5,7 +5,7 @@
 [![React](https://img.shields.io/badge/React-19+-61DAFB.svg?style=flat&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-6+-646CFF.svg?style=flat&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%20%2B%20PostGIS-3ECF8E.svg?style=flat&logo=supabase&logoColor=white)](https://supabase.com)
-[![Fireworks AI](https://img.shields.io/badge/Fireworks%20AI-Qwen%202.5-FF6B6B.svg?style=flat)](https://fireworks.ai)
+[![Fireworks AI](https://img.shields.io/badge/Fireworks%20AI-GLM--5.3--Flash-FF6B6B.svg?style=flat)](https://fireworks.ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -83,7 +83,7 @@ By uniting **real-time weather intelligence**, **crop growth lifecycle modelling
 - **🎙️ Real-Time Voice Assistant Hero**:
   - Authoritative `MediaRecorder` audio capture with streaming chunks.
   - Speech transcription powered by AI4Bharat IndicConformer & Google STT.
-  - Fireworks AI (Qwen 2.5) conversational decision engine.
+  - Fireworks AI (GLM-5.3-Flash) conversational decision engine.
   - **Strict Agricultural Relevance Gating**: Off-topic queries (movies, politics, cricket) are politely deflected with:
     > *"దయచేసి మీ పంట, సాగు లేదా వ్యవసాయానికి సంబంధించిన ప్రశ్నలను మాత్రమే అడగండి."*
   - **Zero Persistent Data Storage**: Transient Q&A queries remain completely stateless in-memory for total privacy.
@@ -120,7 +120,7 @@ By uniting **real-time weather intelligence**, **crop growth lifecycle modelling
 - **3-Step Conversational Reporting**:
   1. **Voice Input**: Farmer speaks their complaint in native Telugu or Hindi.
   2. **AI Summary & Photo Guidance**: System extracts crop type, symptom, duration, and gives visual photo capture tips.
-  3. **Dual-Layer Multimodal Photo Inspection**: GLM-4V / Qwen-VL inspects leaf photos against the voice description to prevent blurry or invalid uploads.
+  3. **Dual-Layer Multimodal Photo Inspection**: YOLO11 ONNX and GLM-5.3-Flash inspect leaf photos against the voice description to prevent blurry or invalid uploads.
 - **Automated Incident Creation**: Generates official incident reference ID (`RB-XXXX`), GPS coordinate mapping, and auto-assigns the case to the local mandal AEO.
 
 ---
@@ -142,17 +142,17 @@ By uniting **real-time weather intelligence**, **crop growth lifecycle modelling
       │                              │                              │
 ┌─────▼──────────┐            ┌──────▼────────┐              ┌──────▼────────┐
 │  FIREWORKS AI  │            │ DUAL-LAYER VL │              │ SPEECH ENGINE │
-│ (Qwen 2.5 72B) │            │(GLM-4V/QwenVL)│              │(IndicConformer│
+│(GLM-5.3-Flash) │            │ (YOLO11+GLM)  │              │(IndicConformer│
 │ Decision Core  │            │Photo Diagnosis│              │  + Indic TTS) │
 └────────────────┘            └───────────────┘              └───────────────┘
 ```
 
 1. **Reasoning & Advisory Core**:
-   - **Model**: Fireworks AI (`accounts/fireworks/models/qwen2p5-72b-instruct` / DeepSeek).
-   - **Role**: Natural language understanding, crop stage context matching, and agricultural relevance gating.
+   - **Model**: Fireworks AI (`accounts/fireworks/models/glm-5p3-flash`).
+   - **Role**: Multilingual understanding, crop stage context matching, and agricultural relevance gating.
 2. **Multimodal Visual Inspection**:
-   - **Model**: GLM-4V / Qwen-VL.
-   - **Role**: Visual disease classification, pest identification, and leaf damage severity estimation.
+   - **Model**: YOLO11 (`f4m1/plant-disease-detector-12`) + GLM-5.3-Flash.
+   - **Role**: Plant pathology localization, visual disease classification, pest identification, and leaf damage severity estimation.
 3. **Speech-to-Text (STT)**:
    - **Engine**: AI4Bharat IndicConformer (AI4Bharat ASR) + Google STT REST fallback.
    - **Supported Dialects**: Telugu (`te-IN`), Hindi (`hi-IN`), Tamil (`ta-IN`), Kannada (`kn-IN`), English (`en-IN`).

@@ -605,7 +605,7 @@ async def answer_farm_voice_question(
     """
     Real-Time Voice Q&A Engine for My Farm:
     - Pure in-memory execution, NO permanent database chat storage.
-    - Evaluates relevance to agriculture/crops using Fireworks AI (Qwen).
+    - Evaluates relevance to agriculture/crops using Fireworks AI (GLM-5.3-Flash).
     - If irrelevant, politely defers back to farming/crop topics.
     - If relevant, answers specifically using farmer's active crop + days + stage context.
     """

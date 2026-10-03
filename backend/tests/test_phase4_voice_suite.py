@@ -126,7 +126,7 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await extract_agricultural_meaning("మొక్కజొన్న పంటలో కాండం తొలిచే పురుగు వచ్చింది")
             self.assertEqual(res["crop_detected"], "Maize")
 
@@ -165,7 +165,7 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await extract_agricultural_meaning("Paddy leaves have brown spots and drying tips")
             self.assertEqual(len(res["symptoms"]), 3)
             self.assertIn("brown spots", res["symptoms"])
@@ -205,7 +205,7 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await extract_agricultural_meaning("ఆకులు ఎండిపోతున్నాయి")
             self.assertIsNone(res["crop_detected"])
 
@@ -244,7 +244,7 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await extract_agricultural_meaning("Tomato plants are wilting")
             self.assertIsNone(res["structured_data"].get("duration"))
 
@@ -478,7 +478,7 @@ class TestPhase4VoiceHardenedSuite(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await extract_agricultural_meaning("Cotton pest damage observed")
             # Must be strictly True
             self.assertTrue(res["requires_aeo_review"])

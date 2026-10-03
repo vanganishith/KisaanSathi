@@ -14,7 +14,7 @@ from app.services.llm_service import (
 from app.core.config import settings
 
 
-class TestFeatherlessQwen3VL(unittest.TestCase):
+class TestFireworksGLM(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
 
@@ -70,7 +70,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-featherless-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-fireworks-key"):
             # Stage 1: Validate voice
             v_res = await validate_and_understand_agricultural_complaint(
                 "మిర్చి తోటలో ఆకులు ముడుచుకుపోతున్నాయి, తెల్లదోమలు ఉన్నాయి.", "Telugu"
@@ -125,7 +125,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             complaint = {"crop": "Paddy", "symptoms": ["yellow leaves"]}
             photos = [{"index": 0, "path": "/fake/paddy_blur.jpg", "usable": True}]
             res = await evaluate_multimodal_evidence(complaint, photos, [])
@@ -176,7 +176,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             complaint = {"crop": "Cotton", "symptoms": ["bollworm"]}
             photos = [{"index": 0, "path": "/fake/wall.jpg"}, {"index": 1, "path": "/fake/bike.jpg"}]
             res = await evaluate_multimodal_evidence(complaint, photos, [])
@@ -208,7 +208,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             res = await validate_and_understand_agricultural_complaint(
                 "నిన్న మ్యాచ్ లో కోహ్లీ సెంచరీ కొట్టాడు, సూపర్ గా ఆడాడు.", "Telugu"
             )
@@ -272,7 +272,7 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         mock_client.post.return_value = mock_resp
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             complaint = {"crop": "Tomato", "symptoms": ["brown spots"]}
             photos = [{"index": 0}, {"index": 1}, {"index": 2}, {"index": 3}]
             res = await evaluate_multimodal_evidence(complaint, photos, [])
@@ -408,16 +408,16 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
         self.assertEqual(d2["incident_id"], inc_id)
 
     # =========================================================================
-    # TEST 8: Featherless API unavailable -> Graceful error handling, no crash
+    # TEST 8: Fireworks AI unavailable -> Graceful error handling, no crash
     # =========================================================================
     @patch("app.services.llm_service.httpx.AsyncClient")
-    async def _async_test_8_featherless_api_unavailable(self, mock_client_cls):
+    async def _async_test_8_fireworks_api_unavailable(self, mock_client_cls):
         # Network failure / timeout
         mock_client = AsyncMock()
-        mock_client.post.side_effect = Exception("Featherless API gateway 504 timeout")
+        mock_client.post.side_effect = Exception("Fireworks API gateway 504 timeout")
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+        with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
             # Stage 1: Fallback activates gracefully
             v_res = await validate_and_understand_agricultural_complaint(
                 "టమోటా ఆకులు ఎండిపోతున్నాయి", "Telugu"
@@ -435,9 +435,9 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
             self.assertTrue(m_res["assessment"]["requires_aeo_verification"])
             self.assertIn("safe_aeo_approach", m_res)
 
-    def test_8_featherless_api_unavailable_graceful(self):
+    def test_8_fireworks_api_unavailable_graceful(self):
         import asyncio
-        asyncio.run(self._async_test_8_featherless_api_unavailable())
+        asyncio.run(self._async_test_8_fireworks_api_unavailable())
 
     # =========================================================================
     # TEST 9: All Healthy Crop Photos -> Rejected with specific retry message
@@ -585,11 +585,11 @@ class TestFeatherlessQwen3VL(unittest.TestCase):
 
 
 
-class TestMultimodalQwen3VLPipeline(unittest.TestCase):
+class TestMultimodalGLMPipeline(unittest.TestCase):
     """
-    Tests for Featherless Qwen3-VL multimodal pipeline:
+    Tests for Fireworks AI GLM-5.3-Flash multimodal pipeline:
     - Bounding box sanitation
-    - Dual-layer coordinates (YOLO absolute vs Qwen normalized)
+    - Dual-layer coordinates (YOLO absolute vs GLM normalized)
     - Structured multimodal assessment and cross-validation
     """
 
@@ -695,7 +695,7 @@ class TestMultimodalQwen3VLPipeline(unittest.TestCase):
                 }
             ]
 
-            with patch("app.core.config.settings.FEATHERLESS_API_KEY", "test-key"):
+            with patch("app.core.config.settings.FIREWORKS_API_KEY", "test-key"):
                 res = await evaluate_multimodal_evidence(complaint, photos_data, yolo_findings)
 
             # 1. Structure verification

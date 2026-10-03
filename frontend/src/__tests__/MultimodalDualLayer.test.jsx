@@ -68,7 +68,7 @@ describe('Dual-Layer Multimodal Visual Evidence Pipeline Tests', () => {
     expect(screen.getByTestId('detections-list')).toBeDefined();
     expect(screen.getByTestId('qwen-mappings-list')).toBeDefined();
     expect(screen.getByText(/Computer Vision Detections \(YOLO11\)/i)).toBeDefined();
-    expect(screen.getByText(/Multimodal Visual Mappings \(Qwen3-VL\)/i)).toBeDefined();
+    expect(screen.getByText(/Multimodal Visual Mappings \(GLM-5.3-Flash\)/i)).toBeDefined();
   });
 
   it('allows toggling YOLO11 layer off while keeping Qwen3-VL spatial mappings visible', () => {

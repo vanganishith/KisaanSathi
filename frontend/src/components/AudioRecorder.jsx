@@ -511,7 +511,7 @@ export default function AudioRecorder({
           {isAnalyzingLlm && (
             <div className="ai-processing-notice">
               <span className="spinner-small"></span>
-              <span>Featherless Qwen3-VL validating agricultural intent & extracting details...</span>
+              <span>Fireworks AI (GLM-5.3-Flash) validating agricultural intent & extracting details...</span>
             </div>
           )}
 

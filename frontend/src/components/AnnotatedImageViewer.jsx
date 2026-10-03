@@ -35,7 +35,7 @@ function getQualityDisplay(quality) {
  * Renders the original farmer photo untouched, with a responsive transparent SVG overlay
  * visualizing BOTH:
  *  1. Local YOLO11 computer vision detections (Red #ef4444)
- *  2. Featherless Qwen3-VL multimodal visual mappings (Purple #8b5cf6)
+ *  2. Fireworks AI (GLM-5.3-Flash) multimodal visual mappings (Purple #8b5cf6)
  * Supports independent toggling of both layers, interactive legend, and detailed symptom cards.
  */
 export default function AnnotatedImageViewer({
@@ -288,7 +288,7 @@ export default function AnnotatedImageViewer({
                 style={{ accentColor: '#8b5cf6', cursor: 'pointer' }}
                 data-testid="toggle-qwen-layer-checkbox"
               />
-              <span>🟣 Qwen3-VL Spatial Mappings ({activeVisualMappings.length})</span>
+              <span>🟣 GLM-5.3-Flash Spatial Mappings ({activeVisualMappings.length})</span>
             </label>
           </div>
 
@@ -416,7 +416,7 @@ export default function AnnotatedImageViewer({
                 );
               })}
 
-              {/* LAYER 2: Qwen3-VL Multimodal Visual Mappings (Purple/Indigo) */}
+              {/* LAYER 2: GLM-5.3-Flash Multimodal Visual Mappings (Purple/Indigo) */}
               {showQwen && activeVisualMappings.map((mapping, mIdx) => {
                 const nb = mapping.bbox_normalized;
                 if (!nb) return null;
@@ -427,7 +427,7 @@ export default function AnnotatedImageViewer({
                 const width = Math.max(2, Math.round((nb.x2 - nb.x1) * imageWidth));
                 const height = Math.max(2, Math.round((nb.y2 - nb.y1) * imageHeight));
                 const shortLabel = mapping.label ? mapping.label.replace(/^Brown circular lesion area observed on /i, 'Lesion on ') : 'Symptom Area';
-                const labelText = `🟣 Qwen3-VL: ${shortLabel} • ${Math.round((mapping.confidence || 0.85) * 100)}%`;
+                const labelText = `🟣 GLM: ${shortLabel} • ${Math.round((mapping.confidence || 0.85) * 100)}%`;
 
                 const badgeHeight = Math.max(22, Math.round(imageHeight * 0.035));
                 const badgeWidth = Math.max(120, Math.round(labelText.length * (imageWidth * 0.0105)));
@@ -617,7 +617,7 @@ export default function AnnotatedImageViewer({
             </div>
           )}
 
-          {/* 2. Qwen3-VL Spatial Mappings List */}
+          {/* 2. GLM-5.3-Flash Spatial Mappings List */}
           {activeVisualMappings.length > 0 && (
             <div
               className="viewer-detections-list"
@@ -625,7 +625,7 @@ export default function AnnotatedImageViewer({
               data-testid="qwen-mappings-list"
             >
               <h5 className="detections-list-title" style={{ color: '#c4b5fd' }}>
-                🟣 Multimodal Visual Mappings (Qwen3-VL) &bull; Photo {activePhotoIdx + 1} ({activeVisualMappings.length}):
+                🟣 Multimodal Visual Mappings (GLM-5.3-Flash) &bull; Photo {activePhotoIdx + 1} ({activeVisualMappings.length}):
               </h5>
               <div className="detection-items-grid">
                 {activeVisualMappings.map((m, mIdx) => (
@@ -650,7 +650,7 @@ export default function AnnotatedImageViewer({
                             color: '#e0e7ff',
                           }}
                         >
-                          Qwen Confidence: {Math.round((m.confidence || 0.85) * 100)}%
+                          GLM Confidence: {Math.round((m.confidence || 0.85) * 100)}%
                         </span>
                       </div>
                       {m.description && (

@@ -241,7 +241,7 @@ export default function AeoDashboard() {
     }
   };
 
-  // Re-run Featherless Qwen3-VL Multimodal Evidence Analysis on active incident
+  // Re-run Fireworks AI (GLM-5.3-Flash) Multimodal Evidence Analysis on active incident
   const handleReanalyzeMultimodal = async (incidentId) => {
     if (!incidentId) return;
     try {
@@ -249,12 +249,12 @@ export default function AeoDashboard() {
       setActionSuccessMessage(null);
       const res = await analyzeIncidentMultimodal(incidentId);
       if (res && res.success) {
-        setActionSuccessMessage('Multimodal spatial analysis completed via Featherless Qwen3-VL.');
+        setActionSuccessMessage('Multimodal spatial analysis completed via Fireworks AI GLM-5.3-Flash.');
         await handleSelectIncident({ id: incidentId });
       }
     } catch (err) {
       console.error('Failed to analyze multimodal evidence:', err);
-      setError(err.message || 'Failed to analyze multimodal evidence with Qwen3-VL.');
+      setError(err.message || 'Failed to analyze multimodal evidence with GLM-5.3-Flash.');
     } finally {
       setAnalyzingMultimodal(false);
     }
@@ -933,7 +933,7 @@ export default function AeoDashboard() {
                   </div>
                 </div>
 
-                {/* 4-Quadrant Evidence Comparison Card (Voice, YOLO11, Featherless Qwen3-VL) */}
+                {/* 4-Quadrant Evidence Comparison Card (Voice, YOLO11, GLM-5.3-Flash) */}
                 <div
                   style={{
                     display: 'flex',
@@ -951,7 +951,7 @@ export default function AeoDashboard() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '1rem' }}>🧠</span>
                     <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b' }}>
-                      Multimodal Evidence Synthesis (Voice + YOLO11 + Qwen3-VL)
+                      Multimodal Evidence Synthesis (Voice + YOLO11 + GLM-5.3-Flash)
                     </span>
                   </div>
 
@@ -976,7 +976,7 @@ export default function AeoDashboard() {
                     }}
                     data-testid="reanalyze-multimodal-btn"
                   >
-                    <span>{analyzingMultimodal ? '⏳ Analyzing with Qwen3-VL...' : '⚡ Re-run Multimodal AI Analysis'}</span>
+                    <span>{analyzingMultimodal ? '⏳ Analyzing with GLM-5.3-Flash...' : '⚡ Re-run Multimodal AI Analysis'}</span>
                   </button>
                 </div>
 
