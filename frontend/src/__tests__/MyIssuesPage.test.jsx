@@ -110,4 +110,66 @@ describe('MyIssuesPage Authentication Gating', () => {
     expect(await screen.findByText(/Whitefly problem on leaves/i)).toBeInTheDocument();
     expect(api.getMyIssues).toHaveBeenCalledWith(30, '+919876543210');
   });
+
+  it('renders minimal title and expands on click to reveal full transcript and details', async () => {
+    const complexIncidents = [
+      {
+        id: 'inc-long-1',
+        crop: 'Cotton',
+        description: 'నా పత్తి పంటలో ఆకుల మీద తెల్లటి మచ్చలు వస్తున్నాయి ఆకులు ముడుచుకుపోతున్నాయి పంట పెరుగుదల కూడా తగ్గిపోయింది దీనికి ఏ మందు వాడాలి',
+        status: 'INVESTIGATING',
+        created_at: '2026-10-03T12:00:00Z',
+        photo_url: 'https://example.com/cotton_damaged.jpg',
+      },
+    ];
+
+    localStorage.setItem(
+      'kisaansathi_farmer_profile',
+      JSON.stringify({
+        farmer_id: 'farmer-77',
+        name: 'Rishik',
+        phone: '+919988776655',
+      })
+    );
+
+    api.getMyIssues.mockResolvedValueOnce({
+      success: true,
+      farmer: { id: 'farmer-77', name: 'Rishik' },
+      incidents: complexIncidents,
+    });
+
+    render(
+      <LanguageProvider>
+        <MemoryRouter>
+          <MyIssuesPage />
+        </MemoryRouter>
+      </LanguageProvider>
+    );
+
+    // Minimal card title rendered
+    const card = await screen.findByTestId('my-issue-card-inc-long-1');
+    expect(card).toBeInTheDocument();
+    expect(screen.getByText(/Under Investigation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Click to view full details/i)).toBeInTheDocument();
+
+    // Expanded tray is not shown initially
+    expect(screen.queryByTestId('expanded-tray-inc-long-1')).not.toBeInTheDocument();
+
+    // Click card to expand full data
+    fireEvent.click(card.querySelector('.my-issue-summary-row'));
+
+    // Full transcript and expanded tray are now visible
+    expect(await screen.findByTestId('expanded-tray-inc-long-1')).toBeInTheDocument();
+    expect(screen.getByText(/Complete Farmer Speech \/ Description:/i)).toBeInTheDocument();
+    expect(screen.getByText(/పంట పెరుగుదల కూడా తగ్గిపోయింది/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Open Full Complaint Journey & Advisory/i })).toBeInTheDocument();
+
+    // Click collapse button
+    const collapseBtn = screen.getByRole('button', { name: /Collapse/i });
+    fireEvent.click(collapseBtn);
+
+    // Tray is collapsed again
+    expect(screen.queryByTestId('expanded-tray-inc-long-1')).not.toBeInTheDocument();
+  });
 });
+

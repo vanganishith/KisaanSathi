@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMyIssues } from '../services/api';
+import './MyIssuesPage.css';
 
 const getStoredProfile = () => {
   try {
@@ -14,6 +15,76 @@ const getCacheKey = (profile) => {
   if (!profile) return null;
   const id = profile.phone || profile.farmer_id;
   return id ? `kisaansathi_my_issues_cache_${id}` : 'kisaansathi_my_issues_cache';
+};
+
+const getCropIcon = (crop = '') => {
+  const c = String(crop || '').toLowerCase();
+  if (c.includes('cotton') || c.includes('పత్తి') || c.includes('कपास')) return '☁️';
+  if (c.includes('chilli') || c.includes('mirchi') || c.includes('మిరప') || c.includes('मिर्च')) return '🌶️';
+  if (c.includes('paddy') || c.includes('rice') || c.includes('వరి') || c.includes('धान')) return '🌾';
+  if (c.includes('tomato') || c.includes('టమాటా') || c.includes('टमाटर')) return '🍅';
+  if (c.includes('maize') || c.includes('corn') || c.includes('మొక్కజొన్న')) return '🌽';
+  if (c.includes('groundnut') || c.includes('వేరుశనగ')) return '🥜';
+  if (c.includes('wheat') || c.includes('గోధుమ')) return '🌾';
+  return '🌱';
+};
+
+const getStatusDetails = (status = '') => {
+  const s = String(status || '').toUpperCase();
+  if (s.includes('INVESTIGAT')) {
+    return { className: 'status-investigating', label: '🔬 Under Investigation' };
+  }
+  if (s.includes('AI') || s.includes('ANALYZ')) {
+    return { className: 'status-ai_analyzed', label: '🤖 AI Analyzed' };
+  }
+  if (s.includes('ADVIS') || s.includes('AEO')) {
+    return { className: 'status-aeo_advised', label: '🛡️ AEO Advised' };
+  }
+  if (s.includes('RESOLV') || s.includes('CLOSE')) {
+    return { className: 'status-resolved', label: '✅ Resolved' };
+  }
+  return { className: 'status-default', label: s || '📋 Reported' };
+};
+
+const getIssueDisplayTitle = (issue) => {
+  if (issue.title && issue.title.trim()) return issue.title.trim();
+
+  // Check structured diagnosis
+  const diag = issue.ai_analysis?.preliminary_disease ||
+    (Array.isArray(issue.ai_analysis) && issue.ai_analysis[0]?.preliminary_disease) ||
+    issue.preliminary_disease;
+  if (diag && diag.trim()) {
+    return `${issue.crop ? `${issue.crop} - ` : ''}${diag.trim()}`;
+  }
+
+  const structuredProblem =
+    issue.ai_analysis?.structured_data?.complaint?.suspected_problem ||
+    (Array.isArray(issue.ai_analysis) && issue.ai_analysis[0]?.structured_data?.complaint?.suspected_problem);
+  if (structuredProblem && structuredProblem.trim()) {
+    return `${issue.crop ? `${issue.crop} - ` : ''}${structuredProblem.trim()}`;
+  }
+
+  // Use description smartly
+  if (issue.description) {
+    const desc = issue.description.trim();
+    if (desc.length <= 60) return desc;
+    const match = desc.match(/^[^.!?,\n]+/);
+    if (match && match[0].length >= 10 && match[0].length <= 70) {
+      return match[0].trim();
+    }
+    return `${desc.slice(0, 55).trim()}...`;
+  }
+
+  return `${issue.crop || 'Crop'} Issue Report`;
+};
+
+const getIssueSnippet = (issue) => {
+  if (!issue.description) return '';
+  const desc = issue.description.trim();
+  const title = getIssueDisplayTitle(issue);
+  if (title === desc) return '';
+  if (desc.length <= 60) return desc;
+  return `${desc.slice(0, 60).trim()}...`;
 };
 
 export default function MyIssuesPage() {
@@ -30,6 +101,7 @@ export default function MyIssuesPage() {
       return [];
     }
   });
+  const [expandedIssueId, setExpandedIssueId] = useState(null);
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(() => {
@@ -122,10 +194,15 @@ export default function MyIssuesPage() {
     window.dispatchEvent(new Event('kisaansathi_open_auth_modal'));
   };
 
+  const toggleExpand = (issueId, e) => {
+    if (e) e.stopPropagation();
+    setExpandedIssueId((prev) => (prev === issueId ? null : issueId));
+  };
+
   const isLoggedIn = Boolean(profile?.farmer_id || profile?.phone);
 
   return (
-    <main className="community-page my-issues-page" style={{ maxWidth: '980px', margin: '0 auto', padding: '24px 16px 60px' }}>
+    <main className="community-page my-issues-page">
       <header className="community-hero">
         <div>
           <span className="community-kicker">Your farmer profile</span>
@@ -232,44 +309,171 @@ export default function MyIssuesPage() {
 
       {isLoggedIn && issues.length > 0 && (
         <div className="my-issues-list">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: '600' }}>
               Showing {issues.length} reported issue{issues.length === 1 ? '' : 's'} for <strong>{profile?.name || profile?.phone}</strong>
             </span>
           </div>
 
-          {issues.map((issue) => (
-            <article
-              className="my-issue-card"
-              key={issue.id}
-              onClick={() => navigate(`/community/problems/${issue.id}`)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') navigate(`/community/problems/${issue.id}`);
-              }}
-              role="button"
-              tabIndex={0}
-              data-testid={`my-issue-card-${issue.id}`}
-              style={{ cursor: 'pointer' }}
-            >
-              <div>
-                <div className="community-post-tags">
-                  {issue.crop && <span className="community-crop-tag">🌱 {issue.crop}</span>}
-                  <span className={`issue-status issue-status-${String(issue.status || '').toLowerCase()}`}>
-                    {issue.status || 'NEW'}
-                  </span>
+          {issues.map((issue) => {
+            const isExpanded = expandedIssueId === issue.id;
+            const title = getIssueDisplayTitle(issue);
+            const snippet = getIssueSnippet(issue);
+            const cropIcon = getCropIcon(issue.crop);
+            const statusInfo = getStatusDetails(issue.status);
+            const photoSrc = issue.photo_url || (Array.isArray(issue.photos) && issue.photos[0]) || null;
+            const hasAudio = Boolean(issue.audio_url);
+
+            return (
+              <article
+                className={`my-issue-card-minimal ${isExpanded ? 'is-expanded' : ''}`}
+                key={issue.id}
+                data-testid={`my-issue-card-${issue.id}`}
+              >
+                {/* Minimal Summary Row */}
+                <div
+                  className="my-issue-summary-row"
+                  onClick={() => toggleExpand(issue.id)}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={isExpanded}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleExpand(issue.id);
+                    }
+                  }}
+                >
+                  <div className="my-issue-content">
+                    <div className="my-issue-tags-row">
+                      {issue.crop && (
+                        <span className="my-issue-crop-pill">
+                          {cropIcon} {issue.crop}
+                        </span>
+                      )}
+                      <span className={`my-issue-status-pill ${statusInfo.className}`}>
+                        {statusInfo.label}
+                      </span>
+                      <span className="my-issue-date-tag">
+                        📅 {issue.created_at ? new Date(issue.created_at).toLocaleDateString() : 'Recently'}
+                      </span>
+                    </div>
+
+                    <h2 className="my-issue-title" title={title}>
+                      {title}
+                    </h2>
+
+                    {snippet && (
+                      <p className="my-issue-snippet">
+                        {snippet}
+                      </p>
+                    )}
+
+                    <div className="my-issue-action-row">
+                      <span className="my-issue-expand-hint">
+                        {isExpanded ? '▴ Hide details' : '▾ Click to view full details'}
+                      </span>
+                      {hasAudio && (
+                        <span className="my-issue-voice-chip">
+                          🎙️ Voice Recorded
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Thumbnail / Image Container */}
+                  <div className="my-issue-thumbnail-box">
+                    {photoSrc ? (
+                      <img
+                        src={photoSrc}
+                        alt={`Reported ${issue.crop || 'crop'} issue`}
+                        className="my-issue-thumb-img"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="my-issue-thumb-placeholder">
+                        <span>{cropIcon}</span>
+                        <small>{issue.crop || 'Crop'}</small>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <h2>{issue.description}</h2>
-                <p style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: '#16a34a', flexWrap: 'wrap' }}>
-                  <span>Reported {issue.created_at ? new Date(issue.created_at).toLocaleDateString() : 'recently'}</span>
-                  <span>&bull;</span>
-                  <span>Open journey and AEO advice →</span>
-                </p>
-              </div>
-              {(issue.photo_url || issue.photos?.[0]) && (
-                <img src={issue.photo_url || issue.photos[0]} alt="Your reported crop problem" loading="lazy" />
-              )}
-            </article>
-          ))}
+
+                {/* Expanded Details Tray: Revealed on Click */}
+                {isExpanded && (
+                  <div className="my-issue-expanded-tray" data-testid={`expanded-tray-${issue.id}`}>
+                    {/* Full Spoken Voice Transcript / Description */}
+                    <div className="my-issue-quote-box">
+                      <div className="my-issue-quote-header">
+                        <span className="my-issue-quote-label">
+                          🎙️ Complete Farmer Speech / Description:
+                        </span>
+                      </div>
+                      <p className="my-issue-full-transcript">
+                        {issue.description || 'No additional transcript recorded.'}
+                      </p>
+
+                      {/* Embedded Audio Player if recorded */}
+                      {issue.audio_url && (
+                        <div className="my-issue-audio-wrapper">
+                          <audio controls src={issue.audio_url} style={{ width: '100%', height: '36px' }}>
+                            Your browser does not support audio playback.
+                          </audio>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Metadata & Analysis Details */}
+                    <div className="my-issue-details-grid">
+                      <div className="my-issue-detail-card">
+                        <h4>🌾 Crop & Field</h4>
+                        <p>{issue.crop || 'General Crop'}</p>
+                      </div>
+                      <div className="my-issue-detail-card">
+                        <h4>🛡️ Officer Status</h4>
+                        <p>{statusInfo.label}</p>
+                      </div>
+                    </div>
+
+                    {/* Photo Gallery if multiple photos */}
+                    {Array.isArray(issue.photos) && issue.photos.length > 1 && (
+                      <div className="my-issue-photos-row">
+                        {issue.photos.map((url, idx) => (
+                          <img
+                            key={idx}
+                            src={url}
+                            alt={`Photo evidence ${idx + 1}`}
+                            className="my-issue-photo-item"
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Action Bar */}
+                    <div className="my-issue-expanded-actions">
+                      <button
+                        type="button"
+                        className="btn-open-journey"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/community/problems/${issue.id}`);
+                        }}
+                      >
+                        🚀 Open Full Complaint Journey & Advisory →
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-collapse-issue"
+                        onClick={(e) => toggleExpand(issue.id, e)}
+                      >
+                        ⌃ Collapse
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       )}
     </main>

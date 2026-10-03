@@ -642,7 +642,7 @@ def list_farmer_incidents(farmer_id: Optional[str] = None, farmer_phone: Optiona
     farmer = _resolve_farmer(client, farmer_id, farmer_phone)
     if not farmer or not farmer.get("id"):
         return {"success": True, "farmer": None, "incidents": []}
-    incidents = client.table("incidents").select("id, crop, description, photo_url, photos, status, priority, location, created_at, updated_at").eq("farmer_id", farmer["id"]).order("created_at", desc=True).limit(min(limit, 50)).execute().data or []
+    incidents = client.table("incidents").select("id, crop, description, photo_url, photos, audio_url, status, priority, location, created_at, updated_at, ai_analysis(id, preliminary_disease, structured_data)").eq("farmer_id", farmer["id"]).order("created_at", desc=True).limit(min(limit, 50)).execute().data or []
     profile = _public_farmer(farmer)
     for incident in incidents:
         location = format_incident_location(dict(incident))
